@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giggles and Gags — On-Chain Social Damage</title>
+  <meta name="description" content="Send cursed on-chain messages. Non-transferable prank NFTs powered by stablecoins and poor judgment." />
+  <meta property="og:title" content="Giggles and Gags" />
+  <meta property="og:description" content="On-chain social damage. Send a cursed message, let the slot machine decide." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Giggles and Gags" />
+  <meta name="twitter:description" content="Non-transferable prank NFTs. On-chain chaos on Base." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ============================================================ -->
+  <!--  SCROLLING MARQUEE                                            -->
+  <!-- ============================================================ -->
+  <div id="marquee" class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>gm ser</span><span class="sep-dot"></span>
+      <span>wagmi</span><span class="sep-dot"></span>
+      <span>ngmi tbh</span><span class="sep-dot"></span>
+      <span>wen moon</span><span class="sep-dot"></span>
+      <span>touch grass</span><span class="sep-dot"></span>
+      <span>this is fine</span><span class="sep-dot"></span>
+      <span>cope harder</span><span class="sep-dot"></span>
+      <span>have fun staying poor</span><span class="sep-dot"></span>
+      <span>few understand</span><span class="sep-dot"></span>
+      <span>probably nothing</span><span class="sep-dot"></span>
+      <span>not financial advice</span><span class="sep-dot"></span>
+      <span>ser this is a Wendys</span><span class="sep-dot"></span>
+      <span>DYOR</span><span class="sep-dot"></span>
+      <span>LFG</span><span class="sep-dot"></span>
+      <!-- Duplicate for seamless loop -->
+      <span>gm ser</span><span class="sep-dot"></span>
+      <span>wagmi</span><span class="sep-dot"></span>
+      <span>ngmi tbh</span><span class="sep-dot"></span>
+      <span>wen moon</span><span class="sep-dot"></span>
+      <span>touch grass</span><span class="sep-dot"></span>
+      <span>this is fine</span><span class="sep-dot"></span>
+      <span>cope harder</span><span class="sep-dot"></span>
+      <span>have fun staying poor</span><span class="sep-dot"></span>
+      <span>few understand</span><span class="sep-dot"></span>
+      <span>probably nothing</span><span class="sep-dot"></span>
+      <span>not financial advice</span><span class="sep-dot"></span>
+      <span>ser this is a Wendys</span><span class="sep-dot"></span>
+      <span>DYOR</span><span class="sep-dot"></span>
+      <span>LFG</span><span class="sep-dot"></span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--  HEADER / NAV                                                 -->
+  <!-- ============================================================ -->
+  <header id="header">
+    <div class="header-inner">
+      <span class="logo glitch-hover" data-text="GaG">GaG</span>
+      <nav>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#mint">Send a Gag</a>
+        <a href="#burn">Burn</a>
+        <a href="#claim">Claim</a>
+        <a href="#lore">Lore</a>
+      </nav>
+      <div class="header-right">
+        <div class="live-stat" id="live-stat" title="Total minted">
+          <span class="live-dot"></span>
+          <span id="stat-minted">--</span> minted
+        </div>
+        <button id="btn-connect" class="btn btn-accent">Connect Wallet</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!--  TOAST CONTAINER                                              -->
+  <!-- ============================================================ -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ============================================================ -->
+  <!--  1. LANDING HERO                                              -->
+  <!-- ============================================================ -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+      <div class="hero-badge">On-Chain Social Damage on Base</div>
+      <h1 class="hero-title">
+        <span class="glitch" data-text="Giggles">Giggles</span>
+        <span class="amp">&amp;</span>
+        <span class="glitch" data-text="Gags">Gags</span>
+      </h1>
+      <p class="hero-tagline">Send a cursed on-chain message. Let the slot machine decide who gets minted next.</p>
+      <p class="hero-sub">
+        A non-transferable prank NFT powered by stablecoins and poor decisions.
+        You submit a message, fund the mischief, and the contract mints whatever
+        previous message gets picked from the live slot buffer.
+        Your target can't transfer it away. They can only burn it by paying.
+      </p>
+      <div class="hero-ctas">
+        <a href="#mint" class="btn btn-primary btn-lg pulse-glow">Send a Gag</a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">How This Chaos Works</a>
+      </div>
+      <div class="trust-strip">
+        <span>Hosted through ENS</span>
+        <span class="sep">/</span>
+        <span>Static frontend</span>
+        <span class="sep">/</span>
+        <span>Fully on-chain metadata</span>
+        <span class="sep">/</span>
+        <span>No backend puppet strings</span>
+        <span class="sep">/</span>
+        <span>Base L2</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  2. HOW IT WORKS                                              -->
+  <!-- ============================================================ -->
+  <section id="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How This Cursed Thing Works</h2>
+      <div class="steps-grid">
+        <div class="step-card fade-in">
+          <span class="step-num">01</span>
+          <span class="step-icon">&#x270D;</span>
+          <h3>You write the message</h3>
+          <p>Pick a victim, write a short message, choose a supported stablecoin, and decide whether you want attribution or ghost mode.</p>
+        </div>
+        <div class="step-card fade-in">
+          <span class="step-num">02</span>
+          <span class="step-icon">&#x1F4B8;</span>
+          <h3>The contract pulls payment</h3>
+          <p>You approve the exact token amount and fund the chaos. No backend, no operator intervention, no polite society.</p>
+        </div>
+        <div class="step-card fade-in">
+          <span class="step-num">03</span>
+          <span class="step-icon">&#x1F3B0;</span>
+          <h3>The slot buffer fires</h3>
+          <p>Your submit randomly hits one of the 15 live slots. If an old gag is sitting there, that one gets minted now.</p>
+        </div>
+        <div class="step-card fade-in">
+          <span class="step-num">04</span>
+          <span class="step-icon">&#x1F525;</span>
+          <h3>Your gag takes its place</h3>
+          <p>Your message replaces that slot and waits for some future degen to trigger it. The cycle continues.</p>
+        </div>
+      </div>
+      <div class="info-callout">
+        This is <strong>not</strong> a normal mint queue.
+        It is a fixed-size chaotic slot buffer.
+        Your submit can cause someone else's stored gag to mint, and your own gag may mint later — or never.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  3. MINT INTENT FORM                                          -->
+  <!-- ============================================================ -->
+  <section id="mint">
+    <div class="container">
+      <h2 class="section-title">Load the Chaos Buffer</h2>
+
+      <div class="mint-layout">
+        <!-- FORM -->
+        <div class="mint-form-panel panel">
+          <div id="wallet-guard" class="wallet-guard">
+            <span class="wallet-icon">&#x1F50C;</span>
+            <p>Connect wallet to begin the mischief</p>
+            <button id="btn-connect-form" class="btn btn-accent">Connect Wallet</button>
+          </div>
+          <div id="network-guard" class="wallet-guard" style="display:none;">
+            <p>Wrong network. Please switch to <strong>Base</strong>.</p>
+            <button id="btn-switch-network" class="btn btn-accent">Switch to Base</button>
+          </div>
+          <form id="mint-form" style="display:none;" autocomplete="off">
+            <!-- Recipient -->
+            <label for="recipient">Recipient Address or Name</label>
+            <input id="recipient" type="text" placeholder="0x... or name.base.eth / name.eth / name.crypto" maxlength="256" spellcheck="false" />
+            <span id="recipient-resolved" class="field-resolved"></span>
+            <span id="recipient-err" class="field-err"></span>
+
+            <!-- Message -->
+            <label for="message">Message <span id="char-count" class="char-count">0 / 64</span></label>
+            <input id="message" type="text" placeholder="Write your gag..." maxlength="64" spellcheck="false" />
+            <span id="message-err" class="field-err"></span>
+            <span class="field-hint">ASCII letters, numbers, and basic punctuation only. No leading/trailing/double spaces.</span>
+
+            <!-- Token selector -->
+            <label for="token-select">Payment Token</label>
+            <div class="token-select-row">
+              <img id="token-icon" class="token-icon" src="" alt="" style="display:none;" />
+              <select id="token-select">
+                <option value="" disabled selected>Loading tokens...</option>
+              </select>
+            </div>
+            <div class="price-row">
+              <span>Mint price: <strong id="mint-price">--</strong></span>
+              <span>Burn fee: <strong id="burn-fee">--</strong></span>
+            </div>
+
+            <!-- Attribution toggle -->
+            <label>Attribution Mode</label>
+            <div class="toggle-group">
+              <button type="button" id="btn-ghost" class="toggle-btn active" data-mode="ghost">
+                Ghost Mode<br /><small>No tracking, no future rewards</small>
+              </button>
+              <button type="button" id="btn-credit" class="toggle-btn" data-mode="credit">
+                Credit Goblin<br /><small>Earn part of future burn fees</small>
+              </button>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-row">
+              <button type="button" id="btn-approve" class="btn btn-accent btn-block" style="display:none;">Approve Token</button>
+              <button type="button" id="btn-submit" class="btn btn-primary btn-block" disabled>Send the Gag</button>
+            </div>
+
+            <p class="form-hint">
+              Approval grants the contract permission to pull the exact mint price — no unlimited approvals.
+              Supports Basenames (.base.eth), ENS (.eth), and Unstoppable Domains resolution.
+            </p>
+          </form>
+
+          <!-- Status messages -->
+          <div id="tx-status" class="tx-status" style="display:none;"></div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-panel panel">
+          <h3 class="preview-heading">Wallet Pollution Preview</h3>
+          <div class="preview-card" id="preview-card">
+            <div class="preview-svg" id="preview-svg">
+              <div class="preview-placeholder">Your gag preview will appear here</div>
+            </div>
+            <div class="preview-meta">
+              <div><span class="meta-label">Recipient:</span> <span id="preview-recipient">--</span></div>
+              <div><span class="meta-label">Mode:</span> <span id="preview-mode">Ghost</span></div>
+              <div><span class="meta-label">Token:</span> <span id="preview-token">--</span></div>
+              <div><span class="meta-label">Chars:</span> <span id="preview-chars">0</span> / 64</div>
+            </div>
+          </div>
+          <p class="preview-disclaimer">This is what your social damage may look like. Approximately.</p>
+
+          <!-- Social share (shown after successful submit) -->
+          <div id="share-panel" class="share-panel" style="display:none;">
+            <p class="share-label">Spread the chaos:</p>
+            <div class="share-buttons">
+              <button class="share-btn share-farcaster" id="btn-share-farcaster" title="Cast on Farcaster">
+                <svg width="16" height="16" viewBox="0 0 1000 1000" fill="currentColor"><path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z"/><path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z"/><path d="M693.333 746.667C681.06 746.667 671.111 756.616 671.111 768.889V795.556H666.667C654.394 795.556 644.444 805.505 644.444 817.778V844.444H893.333V817.778C893.333 805.505 883.384 795.556 871.111 795.556H866.667V768.889C866.667 756.616 856.717 746.667 844.444 746.667V351.111H868.889L897.778 253.333H720V746.667H693.333Z"/></svg>
+                Farcaster
+              </button>
+              <button class="share-btn share-lens" id="btn-share-lens" title="Post on Lens">
+                <svg width="16" height="16" viewBox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="50" cy="50" r="18"/></svg>
+                Lens
+              </button>
+              <button class="share-btn share-x" id="btn-share-x" title="Post on X">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X / Twitter
+              </button>
+              <button class="share-btn share-copy" id="btn-share-copy" title="Copy link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  4. BURN MECHANIC — INFO                                      -->
+  <!-- ============================================================ -->
+  <section id="burn-info">
+    <div class="container">
+      <h2 class="section-title">Escape Hatch: Paid Burn Only</h2>
+      <div class="two-col">
+        <div class="panel info-panel">
+          <p>
+            Once minted, the NFT is <strong>non-transferable</strong>.
+            The recipient cannot pass it to someone else.
+            They can only remove it by paying the burn fee.
+          </p>
+          <p>
+            This is intentional.
+            Giggles and Gags is designed to stick until the target decides it's worth paying to delete.
+          </p>
+        </div>
+        <div class="panel info-panel">
+          <p>
+            If your gag eventually gets burned, you may receive part of the burn fee
+            — but only if you sent it in <strong>Credit Goblin</strong> mode.
+          </p>
+          <p>
+            If you send anonymously, you get no future kickback.
+          </p>
+          <p class="note">
+            Attribution is low-visibility, not true privacy.
+            This is on-chain. Don't confuse "not advertised" with "secret."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  4b. BURN FORM                                                -->
+  <!-- ============================================================ -->
+  <section id="burn" class="burn-section">
+    <div class="burn-glow"></div>
+    <div class="container">
+      <h2 class="section-title">Incinerate a Gag</h2>
+
+      <div class="burn-layout">
+        <!-- FORM -->
+        <div class="burn-form-panel panel" id="burn-panel">
+          <div id="burn-guard" class="wallet-guard">
+            <span class="wallet-icon">&#x1F525;</span>
+            <p>Connect wallet to burn a gag from your collection</p>
+            <button id="btn-connect-burn" class="btn btn-accent">Connect Wallet</button>
+          </div>
+          <form id="burn-form" style="display:none;" autocomplete="off">
+            <!-- Token selector -->
+            <label for="burn-token-id">Your Gags</label>
+            <div class="burn-token-select-row">
+              <select id="burn-token-id">
+                <option value="" disabled selected>Scanning wallet...</option>
+              </select>
+              <button type="button" id="btn-refresh-gags" class="btn-icon" title="Refresh owned tokens">&#x21BB;</button>
+            </div>
+            <span id="burn-token-err" class="field-err"></span>
+            <span id="burn-token-info" class="field-resolved"></span>
+            <div id="burn-empty-state" class="burn-empty-state" style="display:none;">
+              <span class="burn-empty-icon">&#x2728;</span>
+              <p>No gags found in your wallet. Lucky you — or boring you.</p>
+            </div>
+
+            <!-- Payment token selector -->
+            <label for="burn-token-select">Payment Token</label>
+            <div class="token-select-row">
+              <img id="burn-token-icon" class="token-icon" src="" alt="" style="display:none;" />
+              <select id="burn-token-select">
+                <option value="" disabled selected>Loading tokens...</option>
+              </select>
+            </div>
+            <div class="price-row">
+              <span>Burn fee: <strong id="burn-fee-display">--</strong></span>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-row">
+              <button type="button" id="btn-burn-approve" class="btn btn-accent btn-block" style="display:none;">Approve Token</button>
+              <button type="button" id="btn-burn" class="btn btn-danger btn-block" disabled>Burn This Gag</button>
+            </div>
+
+            <p class="form-hint">
+              You must own the token to burn it. The burn fee is paid in the stablecoin you choose.
+              Once burned, the NFT is gone forever.
+            </p>
+          </form>
+
+          <!-- Status messages -->
+          <div id="burn-tx-status" class="tx-status" style="display:none;"></div>
+        </div>
+
+        <!-- SIDE PANEL — BURN EXPLAINER -->
+        <div class="burn-side-panel panel">
+          <h3 class="burn-side-heading">How Burning Works</h3>
+          <div class="burn-steps">
+            <div class="burn-step">
+              <span class="burn-step-num">01</span>
+              <div>
+                <h4>Enter the Token ID</h4>
+                <p>Find the ID of the gag stuck to your wallet. It was assigned when the slot buffer fired.</p>
+              </div>
+            </div>
+            <div class="burn-step">
+              <span class="burn-step-num">02</span>
+              <div>
+                <h4>Pick a Stablecoin</h4>
+                <p>Choose which supported stablecoin to pay the burn fee with. The price is fixed per token.</p>
+              </div>
+            </div>
+            <div class="burn-step">
+              <span class="burn-step-num">03</span>
+              <div>
+                <h4>Approve &amp; Burn</h4>
+                <p>Approve the exact burn fee, then confirm the burn. The NFT is permanently destroyed.</p>
+              </div>
+            </div>
+            <div class="burn-step">
+              <span class="burn-step-num">04</span>
+              <div>
+                <h4>Fee Split</h4>
+                <p>Part of the burn fee goes to the gag's original sender (if they used Credit Goblin mode). The rest goes to the protocol.</p>
+              </div>
+            </div>
+          </div>
+          <div class="burn-warning">
+            <span class="burn-warning-icon">&#x26A0;</span>
+            <p>Burning is <strong>irreversible</strong>. Once confirmed, the token and its on-chain art are gone. No refunds, no undo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  5. CLAIM SECTION                                             -->
+  <!-- ============================================================ -->
+  <section id="claim">
+    <div class="container">
+      <h2 class="section-title">Collect Burn Tribute</h2>
+      <div class="panel claim-panel" id="claim-panel">
+        <div id="claim-guard" class="wallet-guard">
+          <p>Connect wallet to check your claimable rewards</p>
+        </div>
+        <div id="claim-content" style="display:none;">
+          <div id="claim-balances" class="claim-balances">
+            <p class="loading">Loading claimable balances...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  6. DEGEN LORE                                                -->
+  <!-- ============================================================ -->
+  <section id="lore">
+    <div class="container">
+      <h2 class="section-title">The Sacred Lore</h2>
+      <div class="lore-grid">
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x1F47B;</div>
+          <h3>Ghost Mode</h3>
+          <p>Send in silence. No attribution, no kickbacks, no trail. Pure anonymous mischief. You were never here.</p>
+        </div>
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x1F479;</div>
+          <h3>Credit Goblin</h3>
+          <p>Claim your chaos. When the victim burns your gag, you get a cut. Greed is a feature, not a bug.</p>
+        </div>
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x1F3B0;</div>
+          <h3>The Slot Buffer</h3>
+          <p>15 slots of pure entropy. Your message goes in, a random old one gets minted. Nobody knows what fires next.</p>
+        </div>
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x1F525;</div>
+          <h3>Soulbound Curse</h3>
+          <p>No transfers. No hiding. The gag sticks to your wallet like a bad reputation. Pay to remove it or wear it forever.</p>
+        </div>
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x26D3;</div>
+          <h3>Fully On-Chain</h3>
+          <p>Metadata, SVG, attributes — everything lives on Base. No IPFS, no CDN, no single point of failure. Permanent damage.</p>
+        </div>
+        <div class="lore-card fade-in">
+          <div class="lore-icon">&#x1F4A1;</div>
+          <h3>Stablecoin Powered</h3>
+          <p>Pay with USDC, USDS, USDe, GHO, or crvUSD. No volatile gas games. The price of chaos is denominated in real money.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  TOKEN PAGE (shown only on /gag/?id=N route)                  -->
+  <!-- ============================================================ -->
+  <section id="gag-page" style="display:none;">
+    <div class="container">
+      <div class="gag-page-layout">
+        <!-- Token render -->
+        <div class="gag-page-render panel">
+          <div id="gag-page-svg" class="gag-page-svg">
+            <div class="preview-placeholder">Loading token...</div>
+          </div>
+        </div>
+
+        <!-- Token details -->
+        <div class="gag-page-details">
+          <div class="gag-page-id-badge">
+            <span class="gag-badge-label">Token</span>
+            <span class="gag-badge-id" id="gag-page-id">#--</span>
+          </div>
+
+          <div class="panel gag-page-info">
+            <div class="gag-detail-row">
+              <span class="meta-label">Owner</span>
+              <span id="gag-page-owner" class="gag-detail-val">--</span>
+            </div>
+            <div class="gag-detail-row">
+              <span class="meta-label">Attribution</span>
+              <span id="gag-page-attribution" class="gag-detail-val">--</span>
+            </div>
+          </div>
+
+          <div class="panel gag-page-explain">
+            <p><strong>This NFT is non-transferable.</strong></p>
+            <p>The only way to remove it is to pay the burn fee. This is intentional.</p>
+            <p class="note">Randomly assigned chaos — powered by stablecoins and poor judgment.</p>
+          </div>
+
+          <!-- Burn CTA (shown if current wallet owns it) -->
+          <div id="gag-page-burn-cta" class="gag-page-burn-cta" style="display:none;">
+            <a href="#burn" class="btn btn-danger btn-lg btn-block" id="gag-page-burn-link">Burn This Gag</a>
+          </div>
+
+          <!-- Share buttons -->
+          <div class="gag-page-share">
+            <p class="share-label">Share the damage:</p>
+            <div class="share-buttons">
+              <button class="share-btn share-farcaster" id="btn-share-gag-fc" title="Cast on Farcaster">
+                <svg width="16" height="16" viewBox="0 0 1000 1000" fill="currentColor"><path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z"/><path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z"/><path d="M693.333 746.667C681.06 746.667 671.111 756.616 671.111 768.889V795.556H666.667C654.394 795.556 644.444 805.505 644.444 817.778V844.444H893.333V817.778C893.333 805.505 883.384 795.556 871.111 795.556H866.667V768.889C866.667 756.616 856.717 746.667 844.444 746.667V351.111H868.889L897.778 253.333H720V746.667H693.333Z"/></svg>
+                Farcaster
+              </button>
+              <button class="share-btn share-x" id="btn-share-gag-x" title="Post on X">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X / Twitter
+              </button>
+              <button class="share-btn share-copy" id="btn-share-gag-copy" title="Copy link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Send one back CTA -->
+      <div class="gag-page-send-back">
+        <a href="../send" class="btn btn-primary btn-lg">Send One Back</a>
+        <p>Retaliation is the highest form of engagement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  7. CONTRACT / TRUST                                          -->
+  <!-- ============================================================ -->
+  <section id="trust">
+    <div class="container">
+      <h2 class="section-title">Why You Can Trust This</h2>
+
+      <div class="trust-grid">
+        <!-- Trust signal 1 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x1F50D;</span>
+          <h3>Verified &amp; Open Source</h3>
+          <p>The smart contract is fully verified on BaseScan. Read every line. The frontend source is public on GitHub. No hidden code, no obfuscation.</p>
+        </div>
+        <!-- Trust signal 2 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x1F6AB;</span>
+          <h3>No Rug Vectors</h3>
+          <p>The owner can only withdraw <strong>project treasury fees</strong> — accumulated from mint prices and unclaimed burn shares. User claimable rewards are stored separately and can never be touched by the owner.</p>
+        </div>
+        <!-- Trust signal 3 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x1F4B5;</span>
+          <h3>Stablecoins Only</h3>
+          <p>No speculative token. You pay in USDC, USDS, USDe, GHO, or crvUSD. The price of chaos is fixed at $1 to mint and $2 to burn. You always know exactly what you are spending.</p>
+        </div>
+        <!-- Trust signal 4 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x26D3;</span>
+          <h3>Fully On-Chain</h3>
+          <p>Metadata, SVG artwork, and messages all live on Base. No IPFS dependency, no off-chain server. If this website disappears, your tokens (and their damage) survive forever.</p>
+        </div>
+        <!-- Trust signal 5 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x1F512;</span>
+          <h3>Exact Approvals Only</h3>
+          <p>The frontend requests approval for the exact mint/burn amount — never unlimited. You approve $1, the contract pulls $1. Check the transaction yourself.</p>
+        </div>
+        <!-- Trust signal 6 -->
+        <div class="trust-card panel">
+          <span class="trust-icon">&#x1F310;</span>
+          <h3>ENS-Resolved Frontend</h3>
+          <p>This site is served through <strong>gigglesandgags.eth</strong> via ENS contenthash. No centralized hosting, no admin server, no kill switch. Static files on IPFS.</p>
+        </div>
+      </div>
+
+      <div class="panel info-panel trust-contract-info">
+        <h3 class="trust-contract-heading">Contract Details</h3>
+        <div class="contract-info">
+          <div class="info-row">
+            <span class="meta-label">Network:</span>
+            <span class="chain-badge">Base</span>
+          </div>
+          <div class="info-row">
+            <span class="meta-label">Contract:</span>
+            <code id="contract-address">Not yet deployed</code>
+            <button id="btn-copy-addr" class="btn-icon" title="Copy address">&#x2398;</button>
+          </div>
+          <div class="info-row">
+            <a id="basescan-link" href="#" target="_blank" rel="noopener" class="link">View on BaseScan &rarr;</a>
+            <span class="sep">|</span>
+            <a id="github-link" href="#" target="_blank" rel="noopener" class="link">View Source on GitHub &rarr;</a>
+          </div>
+        </div>
+        <div class="trust-audit-note">
+          <p>The contract uses OpenZeppelin's audited ERC-721, Ownable, Pausable, and SafeERC20 base contracts. Transfer functions (<code>approve</code>, <code>setApprovalForAll</code>, <code>transferFrom</code>) are permanently blocked — tokens are non-transferable by design. Burns bypass the pause so holders can always exit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!--  FOOTER                                                       -->
+  <!-- ============================================================ -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo">GaG</span>
+        <span class="footer-ens" id="footer-ens">gigglesandgags.eth</span>
+      </div>
+      <div class="footer-social">
+        <a id="footer-warpcast" href="https://warpcast.com" target="_blank" rel="noopener" title="Farcaster" class="footer-social-link">Warpcast</a>
+        <a id="footer-lens" href="https://hey.xyz" target="_blank" rel="noopener" title="Lens" class="footer-social-link">Lens</a>
+        <a id="footer-x" href="https://x.com" target="_blank" rel="noopener" title="X" class="footer-social-link">X</a>
+      </div>
+      <div class="footer-links">
+        <a id="footer-basescan" href="#" target="_blank" rel="noopener">Contract</a>
+        <a id="footer-github" href="https://github.com" target="_blank" rel="noopener">Source</a>
+      </div>
+      <p class="footer-tagline">randomly assigned chaos — funded by stablecoins, powered by poor judgment</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================ -->
+  <!--  SCRIPTS                                                      -->
+  <!-- ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js" crossorigin="anonymous"></script>
+  <script src="config.js"></script>
+  <script src="abi.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

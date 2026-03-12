@@ -1,0 +1,47 @@
+# ================================================================
+#  Giggles and Gags — .gitignore
+#  SECURITY: This file prevents sensitive material from leaking
+#  into the public GitHub repos.
+# ================================================================
+
+# ---- Foundry build artifacts ----
+cache/
+out/
+
+# ---- Broadcast logs (keep production, ignore local/dry-run) ----
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# ---- Docs (auto-generated) ----
+docs/
+
+# ---- Environment / secrets ----
+.env
+.env.*
+*.secret
+*.key
+*.pem
+
+# ---- Brand guide & marketing (DO NOT PUBLISH) ----
+brand/
+LAUNCH_STRATEGY.md
+DEPLOY.md
+
+# ---- Build output (generated — ship separately to IPFS) ----
+dist/
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+
+# ---- Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Node (if any tooling) ----
+node_modules/
+package-lock.json
+broadcast/
