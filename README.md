@@ -1,6 +1,27 @@
-# Giggles and Gags (GaG)
+<div align="center">
 
-A non-transferable, chaotic slot-machine-style ERC-721 gag NFT collection on Base.
+# Giggles & Gags
+
+**Non-transferable prank NFTs on Base.**
+**15-slot chaos buffer · on-chain SVG metadata · stablecoin powered.**
+
+$1 to curse. $2 to escape.
+
+[![Website](https://img.shields.io/badge/Website-gigglesandgags.eth.limo-ffcc00?style=for-the-badge&logo=ethereum&logoColor=white)](https://gigglesandgags.eth.limo)
+[![Contract](https://img.shields.io/badge/BaseScan-Verified-0052FF?style=for-the-badge&logo=ethereum&logoColor=white)](https://basescan.org/address/0x96b757bDcECd43624B0CD5f5E7B96E57A642484B)
+
+[![X / Twitter](https://img.shields.io/badge/X-@GigglsNGags-000000?style=flat-square&logo=x&logoColor=white)](https://x.com/GigglsNGags)
+[![Farcaster](https://img.shields.io/badge/Farcaster-gigglesandgags-855DCD?style=flat-square&logo=farcaster&logoColor=white)](https://warpcast.com/gigglesandgags)
+[![Lens](https://img.shields.io/badge/Lens-gigglesandgags-00501e?style=flat-square&logo=lens&logoColor=white)](https://hey.xyz/u/gigglesandgags)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/y3mS4weF)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.28-363636?style=flat-square&logo=solidity&logoColor=white)](https://soliditylang.org/)
+[![Base](https://img.shields.io/badge/Chain-Base-0052FF?style=flat-square)](https://base.org)
+
+</div>
+
+---
 
 Send a cursed on-chain message to any wallet. The slot buffer decides what mints next. Recipients can't transfer it — they can only burn it by paying.
 
