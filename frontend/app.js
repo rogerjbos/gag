@@ -376,6 +376,7 @@ function bindGagPageShare(tokenIdStr) {
   const shareText = `Check out Giggles and Gags #${tokenIdStr} — randomly assigned on-chain social damage. ${gagUrl}`;
 
   const fcBtn = document.getElementById("btn-share-gag-fc");
+  const lensBtn = document.getElementById("btn-share-gag-lens");
   const xBtn = document.getElementById("btn-share-gag-x");
   const copyBtn = document.getElementById("btn-share-gag-copy");
 
@@ -383,6 +384,12 @@ function bindGagPageShare(tokenIdStr) {
     fcBtn.onclick = () => {
       window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}`, "_blank", "noopener");
       showToast("Opening Warpcast...", "info");
+    };
+  }
+  if (lensBtn) {
+    lensBtn.onclick = () => {
+      window.open(`https://hey.xyz/?text=${encodeURIComponent(shareText)}`, "_blank", "noopener");
+      showToast("Opening Lens...", "info");
     };
   }
   if (xBtn) {
@@ -483,17 +490,54 @@ async function connectWallet() {
   }
 
   try {
+    // 1. Always request accounts first so the wallet popup actually appears
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+
     const browserProvider = new ethers.BrowserProvider(window.ethereum);
     const network = await browserProvider.getNetwork();
 
+    // 2. If on wrong chain, try to switch automatically before falling back to guard
     if (Number(network.chainId) !== GAG_CONFIG.chainId) {
-      showNetworkGuard();
-      return;
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x" + GAG_CONFIG.chainId.toString(16) }],
+        });
+      } catch (switchErr) {
+        // 4902 = chain not added yet — try adding it
+        if (switchErr.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: "0x" + GAG_CONFIG.chainId.toString(16),
+                chainName: GAG_CONFIG.chainName,
+                rpcUrls: [GAG_CONFIG.rpcUrl],
+                blockExplorerUrls: [GAG_CONFIG.blockExplorer],
+                nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+              }],
+            });
+          } catch {
+            showNetworkGuard();
+            return;
+          }
+        } else {
+          // User rejected the switch — show guard
+          showNetworkGuard();
+          return;
+        }
+      }
+      // Re-create provider after chain switch
+      const updatedProvider = new ethers.BrowserProvider(window.ethereum);
+      signer = await updatedProvider.getSigner();
+      userAddress = await signer.getAddress();
+      provider = updatedProvider;
+    } else {
+      signer = await browserProvider.getSigner();
+      userAddress = await signer.getAddress();
+      provider = browserProvider;
     }
 
-    signer = await browserProvider.getSigner();
-    userAddress = await signer.getAddress();
-    provider = browserProvider;
     gagContract = new ethers.Contract(GAG_CONFIG.contractAddress, GAG_ABI, signer);
 
     // Update button
@@ -574,16 +618,19 @@ function updateContractDisplay() {
     "footer-warpcast": GAG_CONFIG.farcasterProfile || "https://warpcast.com",
     "footer-lens": GAG_CONFIG.lensProfile || "https://hey.xyz",
     "footer-x": GAG_CONFIG.xProfile || "https://x.com",
+    "footer-discord": GAG_CONFIG.discordInvite || "https://discord.gg",
   };
   for (const [id, href] of Object.entries(footerLinks)) {
     const el = document.getElementById(id);
     if (el) el.href = href;
   }
 
-  // GitHub link
-  const ghEl = document.getElementById("footer-github");
-  if (ghEl && GAG_CONFIG.githubRepo) {
-    ghEl.href = GAG_CONFIG.githubRepo;
+  // GitHub links (footer + trust section)
+  const ghEls = [document.getElementById("footer-github"), document.getElementById("github-link")];
+  for (const ghEl of ghEls) {
+    if (ghEl && GAG_CONFIG.githubRepo) {
+      ghEl.href = GAG_CONFIG.githubRepo;
+    }
   }
 }
 
@@ -997,10 +1044,10 @@ async function loadClaimableBalances() {
 
       html += `
         <div class="claim-row">
-          <span class="claim-token">${token.symbol}</span>
-          <span class="claim-amount">${formatted}</span>
+          <span class="claim-token">${escapeHtml(token.symbol)}</span>
+          <span class="claim-amount">${escapeHtml(formatted)}</span>
           <button class="btn btn-accent btn-sm claim-btn"
-                  data-token="${token.address}"
+                  data-token="${escapeHtml(token.address)}"
                   ${claimable === 0n ? "disabled" : ""}>
             Claim
           </button>
@@ -1078,8 +1125,10 @@ async function loadOwnedTokens() {
 
   try {
     // Query Transfer events where `to` is the user (minted to them)
+    // Use deploy block to avoid scanning from genesis (public RPCs reject huge ranges)
+    const fromBlock = GAG_CONFIG.deployBlock || 0;
     const filter = contract.filters.Transfer(null, userAddress);
-    const events = await contract.queryFilter(filter, 0, "latest");
+    const events = await contract.queryFilter(filter, fromBlock, "latest");
 
     // Collect unique candidate token IDs
     const candidateIds = [...new Set(events.map(e => e.args.tokenId))];

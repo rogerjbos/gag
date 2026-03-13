@@ -30,6 +30,10 @@ const GAG_CONFIG = {
   lensProfile: "https://hey.xyz/u/gigglesandgags",
   xProfile: "https://x.com/GigglsNGags",
   githubRepo: "https://github.com/GigglesAndGags/gag",
+  discordInvite: "https://discord.gg/y3mS4weF",
+
+  // ---- Contract deploy block (used to scope event queries) ----
+  deployBlock: 43261068,
 
   // ---- Misc ----
   maxMessageLength: 64,

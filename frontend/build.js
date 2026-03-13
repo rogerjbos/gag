@@ -29,7 +29,7 @@ const SITE_URL = "https://gigglesandgags.eth.limo";
 const ENS_NAME = "gigglesandgags.eth";
 
 // Assets to copy verbatim
-const COPY_FILES = ["app.js", "config.js", "abi.js", "style.css"];
+const COPY_FILES = ["app.js", "config.js", "abi.js", "style.css", "favicon.svg"];
 
 // ---------------------------------------------------------------------------
 //  Route definitions
@@ -40,7 +40,7 @@ const ROUTES = {
     title: "Giggles and Gags — Send a cursed onchain message",
     description:
       "A non-transferable prank NFT powered by stablecoins and randomly assigned chaos. On Base.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     fcButton: "Open App",
   },
   "/send": {
@@ -48,7 +48,7 @@ const ROUTES = {
     title: "Send a Gag — Giggles and Gags",
     description:
       "Fund the chaos buffer. Your gag may mint later. Someone else's may mint now.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     scrollTo: "mint",
     fcButton: "Send a Gag",
   },
@@ -57,7 +57,7 @@ const ROUTES = {
     title: "Burn a Gag — Giggles and Gags",
     description:
       "Got pranked? Pay the burn fee to remove a non-transferable gag from your wallet.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     scrollTo: "burn",
     fcButton: "Burn a Gag",
   },
@@ -66,7 +66,7 @@ const ROUTES = {
     title: "Claim Burn Tribute — Giggles and Gags",
     description:
       "If your attributable gag got burned, collect your cut of the burn fee.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     scrollTo: "claim",
     fcButton: "Claim Tribute",
   },
@@ -75,7 +75,7 @@ const ROUTES = {
     title: "How Giggles and Gags Works",
     description:
       "This is not a normal queue. It is a fixed-size chaos buffer for wallet-to-wallet onchain gags.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     scrollTo: "how-it-works",
     fcButton: "Learn More",
   },
@@ -84,7 +84,7 @@ const ROUTES = {
     title: "Giggles and Gags — Token",
     description:
       "Randomly assigned chaos, permanently attached until someone pays to burn it.",
-    ogImage: "og/default.svg",
+    ogImage: "og/default.png",
     fcButton: "View Gag",
   },
 };
@@ -126,7 +126,7 @@ function buildMetaTags(route, routeConfig) {
         type: "launch_frame",
         name: "Giggles and Gags",
         url: canonicalUrl,
-        splashImageUrl: `${SITE_URL}/og/default.svg`,
+        splashImageUrl: `${SITE_URL}/og/default.png`,
         splashBackgroundColor: "#07080c",
       },
     },
@@ -185,6 +185,12 @@ function buildPageHTML(sourceHTML, route, routeConfig) {
   const fullHead = `<head>
 ${headContent}
 
+  <!-- Base Mini App -->
+  <meta name="base:app_id" content="69b2ba685600c39dcfa4fe3f" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="${assetPrefix}favicon.svg" type="image/svg+xml" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -229,24 +235,30 @@ function buildFarcasterManifest() {
   return JSON.stringify(
     {
       accountAssociation: {
-        header: "REPLACE_WITH_SIGNED_HEADER",
-        payload: "REPLACE_WITH_SIGNED_PAYLOAD",
-        signature: "REPLACE_WITH_SIGNATURE",
+        header: "eyJmaWQiOjI5MDI0OTMsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg3MTYwMDJBNEUwMTRDZDQ0ODliMzZlQUE5QUU2RjI3NGUxNDFiOTMzIn0",
+        payload: "eyJkb21haW4iOiJnaWdnbGVzYW5kZ2Fncy5ldGgubGltbyJ9",
+        signature: "SogFqpyG095j7yi3JsYOqu2qQL/wQ2LPyPTcrmMkRz4QkafSmag+uhfsuLNImdjwkfpnW6ygEN32F4NZ03B1Zhs=",
       },
       frame: {
         version: "1",
         name: "Giggles and Gags",
         iconUrl: `${SITE_URL}/og/icon-512.svg`,
         homeUrl: SITE_URL,
-        imageUrl: `${SITE_URL}/og/default.svg`,
-        buttonTitle: "Open App",
+        imageUrl: `${SITE_URL}/og/default.png`,
+        buttonTitle: "Unleash Chaos",
         splashImageUrl: `${SITE_URL}/og/splash-200.svg`,
         splashBackgroundColor: "#07080c",
         subtitle: "On-chain social damage on Base",
         description:
-          "Non-transferable prank NFTs. Send a cursed message, fund the chaos, and the slot buffer decides what mints next.",
+          "Non-transferable prank NFTs. Send a cursed message, fund the chaos, and the slot buffer decides what mints next. Pay to burn. Collect tribute.",
         primaryCategory: "social",
-        tags: ["nft", "prank", "base", "defi", "social"],
+        heroImageUrl: `${SITE_URL}/og/default.png`,
+        tags: ["nft", "prank", "base", "social", "meme"],
+        tagline: "Send a cursed message.",
+        ogTitle: "GaG: On-Chain Social Damage",
+        ogDescription: "Non-transferable prank NFTs powered by stablecoins and poor judgment. On Base.",
+        ogImageUrl: `${SITE_URL}/og/default.png`,
+        castShareUrl: `${SITE_URL}`,
       },
     },
     null,
@@ -319,12 +331,15 @@ function main() {
   }
 
   // Generate OG images
+  // default.png is a pre-built PNG (platforms reject SVG for og:image)
+  fs.copyFileSync(path.join(SRC_DIR, "og", "default.png"), path.join(OUT_DIR, "og", "default.png"));
   fs.writeFileSync(path.join(OUT_DIR, "og", "default.svg"), generateOGImage());
   fs.writeFileSync(path.join(OUT_DIR, "og", "icon-512.svg"), generateIcon512());
   fs.writeFileSync(
     path.join(OUT_DIR, "og", "splash-200.svg"),
     generateSplash200()
   );
+  console.log("  ✓ og/default.png");
   console.log("  ✓ og/default.svg");
   console.log("  ✓ og/icon-512.svg");
   console.log("  ✓ og/splash-200.svg");
