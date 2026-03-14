@@ -35,6 +35,9 @@ const GAG_CONFIG = {
   // ---- Contract deploy block (used to scope event queries) ----
   deployBlock: 43261068,
 
+  // ---- Base Builder Code (ERC-8021 attribution) ----
+  builderCode: "bc_029tsw4s",
+
   // ---- Misc ----
   maxMessageLength: 64,
 };

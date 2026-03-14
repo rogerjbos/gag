@@ -8,6 +8,40 @@
 /* global ethers, GAG_CONFIG, GAG_ABI, ERC20_ABI */
 
 // ---------------------------------------------------------------------------
+//  ERC-8021 Builder Code Attribution
+// ---------------------------------------------------------------------------
+/**
+ * Build the ERC-8021 data suffix for Base Builder Code attribution.
+ * Format: <builder code as UTF-8 hex> + 0x80218021802180218021802180218021 (16-byte marker)
+ * The EVM ignores trailing calldata, so this is safe for any contract call.
+ */
+function getBuilderCodeSuffix() {
+  if (!GAG_CONFIG.builderCode) return null;
+  const codeHex = ethers.hexlify(ethers.toUtf8Bytes(GAG_CONFIG.builderCode));
+  const marker = "0x80218021802180218021802180218021";
+  // Strip 0x prefixes and concatenate
+  return codeHex.slice(2) + marker.slice(2);
+}
+
+/**
+ * Send a contract transaction with the Builder Code suffix appended to calldata.
+ * Uses signer.sendTransaction with manually encoded data.
+ */
+async function sendWithAttribution(contract, method, args) {
+  const suffix = getBuilderCodeSuffix();
+  if (!suffix) {
+    // No builder code configured — send normally
+    return contract[method](...args);
+  }
+  const calldata = contract.interface.encodeFunctionData(method, args);
+  const tx = await signer.sendTransaction({
+    to: await contract.getAddress(),
+    data: calldata + suffix,
+  });
+  return tx;
+}
+
+// ---------------------------------------------------------------------------
 //  State
 // ---------------------------------------------------------------------------
 let provider = null;
@@ -959,11 +993,11 @@ async function handleApprove() {
     const currentAllowance = await erc20.allowance(userAddress, GAG_CONFIG.contractAddress);
     if (currentAllowance > 0n && currentAllowance < approvalAmount) {
       showStatus("Resetting previous allowance to zero first...", "info");
-      const resetTx = await erc20.approve(GAG_CONFIG.contractAddress, 0);
+      const resetTx = await sendWithAttribution(erc20, "approve", [GAG_CONFIG.contractAddress, 0]);
       await resetTx.wait();
     }
 
-    const tx = await erc20.approve(GAG_CONFIG.contractAddress, approvalAmount);
+    const tx = await sendWithAttribution(erc20, "approve", [GAG_CONFIG.contractAddress, approvalAmount]);
     showStatus("Approval submitted. Waiting for confirmation...", "info");
     await tx.wait();
     showStatus(`Approved exactly ${formatted} ${selectedToken.symbol}. Ready to send.`, "success");
@@ -993,7 +1027,7 @@ async function handleSubmit() {
   showStatus("Sending your gag into the chaos buffer...", "info");
 
   try {
-    const tx = await gagContract.submitMintIntent(anonymize, recipient, token, message);
+    const tx = await sendWithAttribution(gagContract, "submitMintIntent", [anonymize, recipient, token, message]);
     showStatus("Transaction submitted. Waiting for confirmation...", "info");
     showToast("Transaction submitted. Waiting for confirmation...", "info");
     await tx.wait();
@@ -1082,7 +1116,7 @@ async function handleClaim(tokenAddress) {
   showStatus("Claiming burn tribute...", "info");
 
   try {
-    const tx = await gagContract.claimFees(tokenAddress);
+    const tx = await sendWithAttribution(gagContract, "claimFees", [tokenAddress]);
     showStatus("Claim submitted. Waiting for confirmation...", "info");
     await tx.wait();
     showStatus("Burn tribute claimed. You have been compensated for your menace.", "success");
@@ -1303,11 +1337,11 @@ async function handleBurnApprove() {
     const currentAllowance = await erc20.allowance(userAddress, GAG_CONFIG.contractAddress);
     if (currentAllowance > 0n && currentAllowance < approvalAmount) {
       showBurnStatus("Resetting previous allowance to zero first...", "info");
-      const resetTx = await erc20.approve(GAG_CONFIG.contractAddress, 0);
+      const resetTx = await sendWithAttribution(erc20, "approve", [GAG_CONFIG.contractAddress, 0]);
       await resetTx.wait();
     }
 
-    const tx = await erc20.approve(GAG_CONFIG.contractAddress, approvalAmount);
+    const tx = await sendWithAttribution(erc20, "approve", [GAG_CONFIG.contractAddress, approvalAmount]);
     showBurnStatus("Approval submitted. Waiting for confirmation...", "info");
     await tx.wait();
     showBurnStatus(`Approved ${formatted} ${selectedBurnToken.symbol}. Ready to burn.`, "success");
@@ -1340,7 +1374,7 @@ async function handleBurn() {
   showBurnStatus("Sending burn transaction...", "info");
 
   try {
-    const tx = await gagContract.burnToken(tokenId, paymentToken);
+    const tx = await sendWithAttribution(gagContract, "burnToken", [tokenId, paymentToken]);
     showBurnStatus("Burn submitted. Waiting for confirmation...", "info");
     showToast("Burn transaction submitted...", "info");
     await tx.wait();

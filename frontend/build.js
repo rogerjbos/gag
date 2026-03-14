@@ -242,11 +242,11 @@ function buildFarcasterManifest() {
       frame: {
         version: "1",
         name: "Giggles and Gags",
-        iconUrl: `${SITE_URL}/og/icon-512.svg`,
+        iconUrl: `${SITE_URL}/og/icon-1024.png`,
         homeUrl: SITE_URL,
         imageUrl: `${SITE_URL}/og/default.png`,
         buttonTitle: "Unleash Chaos",
-        splashImageUrl: `${SITE_URL}/og/splash-200.svg`,
+        splashImageUrl: `${SITE_URL}/og/splash-200.png`,
         splashBackgroundColor: "#07080c",
         subtitle: "On-chain social damage on Base",
         description:
@@ -331,8 +331,11 @@ function main() {
   }
 
   // Generate OG images
-  // default.png is a pre-built PNG (platforms reject SVG for og:image)
+  // Pre-built PNGs (platforms reject SVG for og:image, icons, and splash)
   fs.copyFileSync(path.join(SRC_DIR, "og", "default.png"), path.join(OUT_DIR, "og", "default.png"));
+  fs.copyFileSync(path.join(SRC_DIR, "og", "icon-1024.png"), path.join(OUT_DIR, "og", "icon-1024.png"));
+  fs.copyFileSync(path.join(SRC_DIR, "og", "splash-200.png"), path.join(OUT_DIR, "og", "splash-200.png"));
+  // Keep SVGs as fallback
   fs.writeFileSync(path.join(OUT_DIR, "og", "default.svg"), generateOGImage());
   fs.writeFileSync(path.join(OUT_DIR, "og", "icon-512.svg"), generateIcon512());
   fs.writeFileSync(
@@ -340,6 +343,8 @@ function main() {
     generateSplash200()
   );
   console.log("  ✓ og/default.png");
+  console.log("  ✓ og/icon-1024.png");
+  console.log("  ✓ og/splash-200.png");
   console.log("  ✓ og/default.svg");
   console.log("  ✓ og/icon-512.svg");
   console.log("  ✓ og/splash-200.svg");
