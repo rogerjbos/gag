@@ -48,37 +48,29 @@ let farcasterSdk = null;
 let isMiniApp = false;
 
 /**
- * Detect if running inside a Farcaster/Base mini app context.
- * In a mini app, the page is embedded in an iframe — window !== window.parent.
- */
-function detectMiniApp() {
-  try {
-    isMiniApp = window !== window.parent;
-  } catch (e) {
-    isMiniApp = true; // cross-origin iframe means embedded
-  }
-  return isMiniApp;
-}
-
-/**
  * Initialize Farcaster Mini App — call sdk.actions.ready() to dismiss splash,
  * and get the embedded wallet provider.
  * The UMD bundle from jsdelivr exposes the SDK as window.miniapp.sdk.
+ * Calling ready() outside a mini app context is harmless (it just does nothing).
  * Returns the EIP-1193 provider from the mini app, or null.
  */
 async function initMiniApp() {
-  if (!detectMiniApp()) return null;
-
   // The UMD bundle exposes miniapp.sdk globally
   farcasterSdk = (typeof miniapp !== "undefined" && miniapp.sdk) ? miniapp.sdk : null;
 
   if (!farcasterSdk) {
-    console.warn("[GaG] Mini app context detected but SDK not available");
-    isMiniApp = false;
+    console.log("[GaG] Farcaster SDK not available — normal browser mode");
     return null;
   }
 
-  console.log("[GaG] Farcaster SDK available, calling ready()...");
+  // Detect if we're in an iframe (mini app context)
+  try {
+    isMiniApp = window !== window.parent;
+  } catch (e) {
+    isMiniApp = true; // cross-origin iframe = embedded
+  }
+
+  console.log("[GaG] Farcaster SDK found, isMiniApp:", isMiniApp, "— calling ready()...");
   try {
     await farcasterSdk.actions.ready();
     console.log("[GaG] sdk.actions.ready() called — splash dismissed");
@@ -86,15 +78,18 @@ async function initMiniApp() {
     console.warn("[GaG] sdk.actions.ready() failed:", e);
   }
 
-  // Get the embedded wallet provider
-  try {
-    const ethProvider = await farcasterSdk.wallet.getEthereumProvider();
-    console.log("[GaG] Got mini app Ethereum provider");
-    return ethProvider;
-  } catch (e) {
-    console.warn("[GaG] Could not get mini app wallet provider:", e);
-    return null;
+  // Only try to get wallet provider if in mini app context
+  if (isMiniApp) {
+    try {
+      const ethProvider = await farcasterSdk.wallet.getEthereumProvider();
+      console.log("[GaG] Got mini app Ethereum provider");
+      return ethProvider;
+    } catch (e) {
+      console.warn("[GaG] Could not get mini app wallet provider:", e);
+    }
   }
+
+  return null;
 }
 
 /** Cached mini app Ethereum provider (set during init). */
