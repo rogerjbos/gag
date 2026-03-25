@@ -1,0 +1,18 @@
+{
+  "name": "dotrot-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server -d src 8080",
+    "bundle": "node build-bundle.mjs",
+    "build": "node build-bundle.mjs && node build.cjs"
+  },
+  "dependencies": {
+    "@novasamatech/product-sdk": "0.6.1",
+    "polkadot-api": "1.23.1",
+    "ethers": "^6.14.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

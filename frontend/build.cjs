@@ -30,6 +30,7 @@ const DOMAIN_NAME = "dotrot.dot.li";
 
 // Assets to copy verbatim
 const COPY_FILES = ["app.js", "config.js", "abi.js", "style.css", "favicon.svg"];
+const WALLET_BUNDLE = path.join(__dirname, "dist-bundle", "wallet-bundle.js");
 
 // ---------------------------------------------------------------------------
 //  Route definitions
@@ -198,9 +199,10 @@ ${headContent}
     /  <script src="abi\.js"><\/script>/,
     `  <script src="${assetPrefix}abi.js"></script>`
   );
+  // Inject wallet bundle before app.js (provides DotRotWallet global)
   html = html.replace(
     /  <script src="app\.js"><\/script>/,
-    `  <script src="${assetPrefix}app.js"></script>`
+    `  <script src="${assetPrefix}wallet-bundle.js"></script>\n  <script src="${assetPrefix}app.js"></script>`
   );
 
   return html;
@@ -269,6 +271,14 @@ function main() {
   for (const file of COPY_FILES) {
     fs.copyFileSync(path.join(SRC_DIR, file), path.join(OUT_DIR, file));
     console.log(`  ✓ ${file}`);
+  }
+
+  // Copy wallet bundle (if built)
+  if (fs.existsSync(WALLET_BUNDLE)) {
+    fs.copyFileSync(WALLET_BUNDLE, path.join(OUT_DIR, "wallet-bundle.js"));
+    console.log("  ✓ wallet-bundle.js");
+  } else {
+    console.warn("  ⚠ wallet-bundle.js not found — run 'node build-bundle.mjs' first");
   }
 
   // Generate OG images

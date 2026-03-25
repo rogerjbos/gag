@@ -5,7 +5,7 @@
  * handles wallet connection, minting (native PAS payment), burning, and claiming.
  */
 
-/* global ethers, GAG_CONFIG, GAG_ABI */
+/* global ethers, GAG_CONFIG, GAG_ABI, DotRotWallet */
 
 // ---------------------------------------------------------------------------
 //  State
@@ -18,6 +18,7 @@ let userAddress = null;
 let anonymize = true;        // ghost mode by default
 let mintPrice = 0n;
 let burnFeeAmount = 0n;
+let walletState = null;      // full wallet state from DotRotWallet.connectWallet
 
 // ---------------------------------------------------------------------------
 //  Router — path-based page detection
@@ -213,11 +214,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   pollLiveStats();
   applyRouting();
 
-  // Auto-connect wallet if previously connected
-  const ethProvider = window.ethereum;
-  if (ethProvider && ethProvider.selectedAddress) {
-    connectWallet();
-  }
+  // Auto-connect via Spektr (Triangle host)
+  connectWallet();
 });
 
 function initReadOnly() {
@@ -239,8 +237,6 @@ function bindUI() {
   if (connectFormBtn) connectFormBtn.addEventListener("click", connectWallet);
   const connectBurnBtn = document.getElementById("btn-connect-burn");
   if (connectBurnBtn) connectBurnBtn.addEventListener("click", connectWallet);
-  const switchBtn = document.getElementById("btn-switch-network");
-  if (switchBtn) switchBtn.addEventListener("click", switchToAssetHub);
 
   // Form inputs
   document.getElementById("recipient").addEventListener("input", onRecipientInput);
@@ -278,65 +274,26 @@ function bindUI() {
 }
 
 // ---------------------------------------------------------------------------
-//  Wallet Connection
+//  Wallet Connection (Triangle / Spektr only)
 // ---------------------------------------------------------------------------
 async function connectWallet() {
-  const ethProvider = window.ethereum;
-  if (!ethProvider) {
-    alert("No Ethereum wallet detected. Please install MetaMask or a compatible wallet.");
-    return;
-  }
-
   try {
-    await ethProvider.request({ method: "eth_requestAccounts" });
-
-    const browserProvider = new ethers.BrowserProvider(ethProvider);
-    const network = await browserProvider.getNetwork();
-
-    if (Number(network.chainId) !== GAG_CONFIG.chainId) {
-      try {
-        await ethProvider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x" + GAG_CONFIG.chainId.toString(16) }],
-        });
-      } catch (switchErr) {
-        if (switchErr.code === 4902) {
-          try {
-            await ethProvider.request({
-              method: "wallet_addEthereumChain",
-              params: [{
-                chainId: "0x" + GAG_CONFIG.chainId.toString(16),
-                chainName: GAG_CONFIG.chainName,
-                rpcUrls: [GAG_CONFIG.rpcUrl],
-                blockExplorerUrls: [GAG_CONFIG.blockExplorer],
-                nativeCurrency: GAG_CONFIG.nativeCurrency,
-              }],
-            });
-          } catch {
-            showNetworkGuard();
-            return;
-          }
-        } else {
-          showNetworkGuard();
-          return;
-        }
-      }
-      const updatedProvider = new ethers.BrowserProvider(ethProvider);
-      signer = await updatedProvider.getSigner();
-      userAddress = await signer.getAddress();
-      provider = updatedProvider;
-    } else {
-      signer = await browserProvider.getSigner();
-      userAddress = await signer.getAddress();
-      provider = browserProvider;
-    }
+    walletState = await DotRotWallet.connectWallet(GAG_CONFIG);
+    signer = walletState.evmWallet;
+    userAddress = walletState.evmAddress;
 
     gagContract = new ethers.Contract(GAG_CONFIG.contractAddress, GAG_ABI, signer);
 
     // Update button
     const btn = document.getElementById("btn-connect");
-    btn.textContent = truncateAddress(userAddress);
+    btn.textContent = walletState.accountName || truncateAddress(userAddress);
     btn.classList.add("connected");
+
+    // If derived EVM address needs funding, show prompt
+    if (walletState.needsFunding) {
+      showFundingPrompt();
+      return;
+    }
 
     showMintForm();
     await loadPrices();
@@ -345,10 +302,12 @@ async function connectWallet() {
       loadOwnedTokens(),
     ]);
 
-    if (ethProvider.on) {
-      ethProvider.on("accountsChanged", () => window.location.reload());
-      ethProvider.on("chainChanged", () => window.location.reload());
-    }
+    // Watch for account changes
+    DotRotWallet.onAccountStatusChange(async (status) => {
+      if (status === "disconnected") {
+        window.location.reload();
+      }
+    });
   } catch (err) {
     console.error("Wallet connection failed:", err);
     showStatus("Wallet connection failed: " + err.message, "error");
@@ -356,28 +315,41 @@ async function connectWallet() {
   }
 }
 
-async function switchToAssetHub() {
-  const ethProvider = window.ethereum;
-  if (!ethProvider) return;
-  try {
-    await ethProvider.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: "0x" + GAG_CONFIG.chainId.toString(16) }],
-    });
-    window.location.reload();
-  } catch (err) {
-    if (err.code === 4902) {
-      await ethProvider.request({
-        method: "wallet_addEthereumChain",
-        params: [{
-          chainId: "0x" + GAG_CONFIG.chainId.toString(16),
-          chainName: GAG_CONFIG.chainName,
-          rpcUrls: [GAG_CONFIG.rpcUrl],
-          blockExplorerUrls: [GAG_CONFIG.blockExplorer],
-          nativeCurrency: GAG_CONFIG.nativeCurrency,
-        }],
-      });
-    }
+/** Show a prompt to fund the derived EVM address from the Substrate account */
+function showFundingPrompt() {
+  const mintForm = document.getElementById("mint-form");
+  if (mintForm) mintForm.style.display = "none";
+
+  showStatus(
+    `Your DotRot address (${truncateAddress(userAddress)}) needs PAS to interact with the contract. Click "Fund Wallet" to transfer PAS from your Polkadot account.`,
+    "info"
+  );
+
+  const txStatus = document.getElementById("tx-status");
+  if (txStatus) {
+    const fundBtn = document.createElement("button");
+    fundBtn.className = "btn btn-accent";
+    fundBtn.textContent = "Fund Wallet (5 PAS)";
+    fundBtn.style.marginTop = "12px";
+    fundBtn.onclick = async () => {
+      fundBtn.disabled = true;
+      fundBtn.textContent = "Funding...";
+      try {
+        await DotRotWallet.fundEvmAddress(
+          walletState.accountsProvider,
+          walletState.providerAccounts,
+          walletState.evmAddress,
+          5000000000000000000n // 5 PAS
+        );
+        showStatus("Funded! Reloading...", "success");
+        setTimeout(() => window.location.reload(), 2000);
+      } catch (e) {
+        showStatus("Funding failed: " + e.message, "error");
+        fundBtn.disabled = false;
+        fundBtn.textContent = "Fund Wallet (5 PAS)";
+      }
+    };
+    txStatus.appendChild(fundBtn);
   }
 }
 
@@ -406,20 +378,9 @@ async function loadPrices() {
 // ---------------------------------------------------------------------------
 //  UI State Management
 // ---------------------------------------------------------------------------
-function showNetworkGuard() {
-  const walletGuard = document.getElementById("wallet-guard");
-  if (walletGuard) walletGuard.style.display = "none";
-  const networkGuard = document.getElementById("network-guard");
-  if (networkGuard) networkGuard.style.display = "flex";
-  const mintForm = document.getElementById("mint-form");
-  if (mintForm) mintForm.style.display = "none";
-}
-
 function showMintForm() {
   const walletGuard = document.getElementById("wallet-guard");
   if (walletGuard) walletGuard.style.display = "none";
-  const networkGuard = document.getElementById("network-guard");
-  if (networkGuard) networkGuard.style.display = "none";
   const mintForm = document.getElementById("mint-form");
   if (mintForm) mintForm.style.display = "block";
   const claimGuard = document.getElementById("claim-guard");
