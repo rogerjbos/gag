@@ -276,32 +276,47 @@ async function initPeopleChain() {
 export async function resolveUsername(username) {
   try {
     await initPeopleChain();
+    console.log("[People] Resolving username:", username);
 
-    // Convert username to hex bytes for storage key
-    const usernameBytes = Binary.fromText(username);
-    const result = await _peopleApi.query.Identity.UsernameOf.getValue(usernameBytes);
+    // Convert username to hex bytes
+    const hexUsername = "0x" + Array.from(new TextEncoder().encode(username))
+      .map(b => b.toString(16).padStart(2, "0")).join("");
+    console.log("[People] Hex:", hexUsername);
 
-    if (!result) return null;
+    // Try Identity.UsernameOf first, then Resources.UsernameOwnerOf
+    const queries = [
+      { pallet: "Identity", storage: "UsernameOf" },
+      { pallet: "Identity", storage: "UsernameAuthorityOf" },
+      { pallet: "Resources", storage: "UsernameOwnerOf" },
+      { pallet: "Resources", storage: "usernameOwnerOf" },
+    ];
 
-    // Result is the account ID (SS58 address)
-    const ss58 = result.toString ? result.toString() : String(result);
-    return ss58 || null;
-  } catch (e) {
-    console.warn("[People] Username resolution failed for", username, e);
-
-    // Fallback: try raw storage query with hex-encoded username
-    try {
-      const hexUsername = "0x" + Array.from(new TextEncoder().encode(username))
-        .map(b => b.toString(16).padStart(2, "0")).join("");
-      const result = await _peopleApi.query.Identity.UsernameOf.getValue(
-        Binary.fromHex(hexUsername)
-      );
-      if (result) {
-        const ss58 = result.toString ? result.toString() : String(result);
-        return ss58 || null;
+    for (const { pallet, storage } of queries) {
+      try {
+        const q = _peopleApi.query[pallet]?.[storage];
+        if (!q) {
+          console.log(`[People] ${pallet}.${storage} not found, skipping`);
+          continue;
+        }
+        console.log(`[People] Trying ${pallet}.${storage}...`);
+        const result = await q.getValue(Binary.fromHex(hexUsername));
+        console.log(`[People] ${pallet}.${storage} result:`, result);
+        if (result) {
+          const ss58 = result.toString ? result.toString() : String(result);
+          if (ss58 && ss58 !== "null" && ss58 !== "undefined") {
+            console.log("[People] Resolved to:", ss58);
+            return ss58;
+          }
+        }
+      } catch (e) {
+        console.log(`[People] ${pallet}.${storage} failed:`, e.message);
       }
-    } catch {}
+    }
 
+    console.warn("[People] All resolution attempts failed for", username);
+    return null;
+  } catch (e) {
+    console.error("[People] Username resolution error:", e);
     return null;
   }
 }
