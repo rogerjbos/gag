@@ -233,7 +233,43 @@ export async function writeContract(callerSS58, contractAddress, abi, functionNa
     // Only throw on revert if account is already mapped — unmapped accounts
     // always fail dry-run since Revive can't resolve the caller
     if (!needsMapping && callResult && "success" in callResult && !callResult.success) {
-      throw new Error(`Contract call reverted: ${functionName}`);
+      // Try to extract the Solidity revert reason
+      const revertData = callResult.value?.data;
+      let revertHex = null;
+      if (revertData && typeof revertData.asHex === "function") {
+        revertHex = revertData.asHex();
+      } else if (typeof revertData === "string") {
+        revertHex = revertData.startsWith("0x") ? revertData : `0x${revertData}`;
+      }
+      console.error(`[Contract] dry-run revert for ${functionName}:`, {
+        callResult: JSON.stringify(callResult, (_, v) => typeof v === "bigint" ? v.toString() : v),
+        revertHex,
+        needsMapping,
+        value: value.toString(),
+      });
+
+      // Try to decode Error(string) selector 0x08c379a0
+      let reason = functionName;
+      if (revertHex && revertHex.startsWith("0x08c379a0") && revertHex.length > 10) {
+        try {
+          const msgHex = revertHex.slice(10);
+          const bytes = new Uint8Array(msgHex.match(/.{1,2}/g).map(b => parseInt(b, 16)));
+          const len = Number(BigInt("0x" + msgHex.slice(64, 128)));
+          reason = new TextDecoder().decode(bytes.slice(64, 64 + len));
+        } catch {}
+      }
+      // Try to match custom error selectors from the ABI
+      if (revertHex) {
+        const selector = revertHex.slice(0, 10);
+        const knownErrors = {
+          "0xf4844814": "InsufficientPayment",
+          "0x8baa579f": "InvalidRecipient",
+          "0xa04d15b5": "NonTransferable",
+          "0x49e27cff": "NotTokenOwner",
+        };
+        if (knownErrors[selector]) reason = knownErrors[selector];
+      }
+      throw new Error(`Contract call reverted: ${reason}`);
     }
     if (dryRun.gas_required) {
       refTime = BigInt(dryRun.gas_required.ref_time) * 5n / 4n;
