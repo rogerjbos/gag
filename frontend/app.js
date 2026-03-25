@@ -438,9 +438,9 @@ function updateContractDisplay() {
   if (contractAddrEl) contractAddrEl.textContent = addr;
   const scanUrl = `${GAG_CONFIG.blockExplorer}/address/${addr}`;
 
-  const scanLink = document.getElementById("basescan-link");
+  const scanLink = document.getElementById("blockscout-link");
   if (scanLink) scanLink.href = scanUrl;
-  const footerScan = document.getElementById("footer-basescan");
+  const footerScan = document.getElementById("footer-blockscout");
   if (footerScan) footerScan.href = scanUrl;
   const footerEns = document.getElementById("footer-ens");
   if (footerEns) footerEns.textContent = GAG_CONFIG.siteUrl.replace("https://", "");

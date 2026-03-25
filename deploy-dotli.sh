@@ -18,7 +18,7 @@ set -euo pipefail
 NAME="${1:-dotrot}"
 BUILD_DIR="./dist"
 BULLETIN_RPC="wss://paseo-bulletin-rpc.polkadot.io"
-DOTNS_RPC="wss://paseo-rpc.polkadot.io"
+DOTNS_RPC="wss://asset-hub-paseo-rpc.n.dwellir.com"
 
 # Locate dotns CLI — prefer local dotns-sdk build, fall back to global
 DOTNS_SDK="${DOTNS_SDK:-../dotns-sdk}"

@@ -67,7 +67,7 @@ jobs:
     env:
       DOMAIN: dotrot
       BULLETIN_RPC: wss://paseo-bulletin-rpc.polkadot.io
-      DOTNS_RPC: wss://paseo-rpc.polkadot.io
+      DOTNS_RPC: wss://asset-hub-paseo-rpc.n.dwellir.com
     steps:
       - name: Checkout dotns-sdk
         uses: actions/checkout@v4

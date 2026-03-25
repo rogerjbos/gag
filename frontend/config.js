@@ -3,7 +3,7 @@
  */
 const GAG_CONFIG = {
   // ---- Contract ----
-  contractAddress: "0x33B05dA43c0105Ba6274d0DE6875739F73d38aEC",
+  contractAddress: "0x28e3D06239859260688F87C0FF183DB1aFbC2351",
   chainId: 420420417, // Paseo Asset Hub testnet
   chainName: "Paseo Asset Hub",
   rpcUrl: "https://eth-rpc-testnet.polkadot.io/",
