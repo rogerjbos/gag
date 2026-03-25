@@ -113,7 +113,7 @@ jobs:
       - name: Upload to Bulletin
         id: bulletin
         run: |
-          RESULT=$(NODE_OPTIONS="--max-old-space-size=4096" node dotns-sdk/packages/cli/dist/cli.js bulletin upload ./build --json --parallel -m "$DOTNS_MNEMONIC" --bulletin-rpc "$BULLETIN_RPC" --rpc "$DOTNS_RPC")
+          RESULT=$(NODE_OPTIONS="--max-old-space-size=4096" node dotns-sdk/packages/cli/dist/cli.js bulletin upload ./build --json -m "$DOTNS_MNEMONIC" --bulletin-rpc "$BULLETIN_RPC" --rpc "$DOTNS_RPC")
           CID=$(echo "$RESULT" | jq -r '.cid')
           echo "cid=$CID" >> "$GITHUB_OUTPUT"
           echo "Uploaded CID: $CID"
