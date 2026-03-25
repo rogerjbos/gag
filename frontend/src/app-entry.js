@@ -13,6 +13,7 @@ import {
   getBalance,
   resolveAddress,
   resolveDotNS,
+  resolveUsername,
 } from "./wallet.js";
 
 window.DotRotWallet = {
@@ -23,6 +24,7 @@ window.DotRotWallet = {
   getBalance,
   resolveAddress,
   resolveDotNS,
+  resolveUsername,
 };
 
 window.dispatchEvent(new Event("dotrot-wallet-ready"));

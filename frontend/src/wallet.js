@@ -219,16 +219,91 @@ export async function resolveAddress(input) {
     }
   }
 
-  // DotNS name (alphanumeric, may contain dots and hyphens)
+  // People Chain username (e.g. "rogerjbos.39" — name + dot + number)
+  if (/^[a-zA-Z0-9_-]+\.\d+$/.test(trimmed)) {
+    try {
+      const ss58 = await resolveUsername(trimmed);
+      if (ss58) {
+        const h160 = ss58ToH160(ss58);
+        return { address: h160, type: "username", display: `${trimmed} → ${h160.slice(0, 10)}...` };
+      }
+    } catch {}
+  }
+
+  // DotNS name (alphanumeric, may contain dots and hyphens, but not name.number pattern)
   if (/^[a-zA-Z0-9][a-zA-Z0-9.\-]*$/.test(trimmed) && trimmed.length <= 64) {
+    // Try DotNS first
     const resolved = await resolveDotNS(trimmed);
     if (resolved) {
       const displayName = trimmed.includes(".") ? trimmed : trimmed + ".dot";
       return { address: resolved, type: "dotns", display: `${displayName} → ${resolved.slice(0, 10)}...` };
     }
+
+    // If DotNS fails, try as People Chain username anyway
+    try {
+      const ss58 = await resolveUsername(trimmed);
+      if (ss58) {
+        const h160 = ss58ToH160(ss58);
+        return { address: h160, type: "username", display: `${trimmed} → ${h160.slice(0, 10)}...` };
+      }
+    } catch {}
   }
 
   return null;
+}
+
+// ---------------------------------------------------------------------------
+//  People Chain username resolution (e.g. "rogerjbos.39" → SS58 → H160)
+// ---------------------------------------------------------------------------
+
+const PEOPLE_CHAIN_RPC = "wss://pop3-testnet.parity-lab.parity.io/people";
+let _peopleClient = null;
+let _peopleApi = null;
+
+async function initPeopleChain() {
+  if (_peopleClient) return;
+  const provider = getWsProvider(PEOPLE_CHAIN_RPC);
+  _peopleClient = createClient(provider);
+  _peopleApi = _peopleClient.getUnsafeApi();
+}
+
+/**
+ * Resolve a People Chain username to an SS58 address.
+ * e.g. "rogerjbos.39" → "5DeuwLo5xm8Js6aEA2SCjtn2iCshYN1poJv2t1AUVvPfmRm6"
+ * @param {string} username - People Chain username (e.g. "rogerjbos.39")
+ * @returns {string|null} SS58 address or null
+ */
+export async function resolveUsername(username) {
+  try {
+    await initPeopleChain();
+
+    // Convert username to hex bytes for storage key
+    const usernameBytes = Binary.fromText(username);
+    const result = await _peopleApi.query.Identity.UsernameOf.getValue(usernameBytes);
+
+    if (!result) return null;
+
+    // Result is the account ID (SS58 address)
+    const ss58 = result.toString ? result.toString() : String(result);
+    return ss58 || null;
+  } catch (e) {
+    console.warn("[People] Username resolution failed for", username, e);
+
+    // Fallback: try raw storage query with hex-encoded username
+    try {
+      const hexUsername = "0x" + Array.from(new TextEncoder().encode(username))
+        .map(b => b.toString(16).padStart(2, "0")).join("");
+      const result = await _peopleApi.query.Identity.UsernameOf.getValue(
+        Binary.fromHex(hexUsername)
+      );
+      if (result) {
+        const ss58 = result.toString ? result.toString() : String(result);
+        return ss58 || null;
+      }
+    } catch {}
+
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
