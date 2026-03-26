@@ -1,12 +1,12 @@
 /**
- * @title DotRot Metadata Listener
- * @notice Watches for mint events on the DotRot contract,
+ * @title GaG Metadata Listener
+ * @notice Watches for mint events on the GaG contract,
  *         generates SVG + metadata, uploads to Bulletin TransactionStorage
  *         via the dotns CLI, and writes the CID back to the contract.
  *
  * Environment variables:
  *   RPC_URL           — Asset Hub EVM JSON-RPC endpoint
- *   CONTRACT_ADDRESS  — Deployed DotRot contract address
+ *   CONTRACT_ADDRESS  — Deployed GaG contract address
  *   UPDATER_KEY       — Private key of the metadata updater account
  *   DOTNS_MNEMONIC    — BIP39 mnemonic for Bulletin TransactionStorage uploads
  *
@@ -100,7 +100,7 @@ async function processToken(tokenId) {
   console.log(`  Token ${tokenIdNum}: message="${message}"`);
 
   // Generate metadata
-  const metadata = buildMetadata("DotRot", tokenIdNum, message);
+  const metadata = buildMetadata("GaG", tokenIdNum, message);
 
   // Write to temp file for upload
   const tmpDir = `.tmp-${tokenIdNum}`;

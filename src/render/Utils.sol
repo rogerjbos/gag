@@ -3,7 +3,7 @@ pragma solidity ^0.8.27;
 
 /**
  * @title Utils
- * @notice Text validation and XML-escaping utilities for DotRot.
+ * @notice Text validation and XML-escaping utilities for GaG.
  *         Ensures gag messages are safe for on-chain SVG rendering and conform to
  *         the strict ASCII whitelist rules of the collection.
  * @dev Validation is byte-based. Because the whitelist is strict ASCII-only, one byte

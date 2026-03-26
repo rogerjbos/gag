@@ -2,12 +2,12 @@
 pragma solidity ^0.8.27;
 
 import {Test} from "forge-std/Test.sol";
-import {DotRot} from "../src/DotRot.sol";
+import {GaG} from "../src/GaG.sol";
 
 /// @title BaseTest
-/// @notice Shared test setup and helper utilities for all DotRot test suites.
+/// @notice Shared test setup and helper utilities for all GaG test suites.
 abstract contract BaseTest is Test {
-    DotRot public gag;
+    GaG public gag;
 
     address public owner = makeAddr("owner");
     address public alice = makeAddr("alice");
@@ -49,7 +49,7 @@ abstract contract BaseTest is Test {
 
         // Deploy the main contract.
         vm.prank(owner);
-        gag = new DotRot(owner, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
+        gag = new GaG(owner, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
 
         // Set the metadata updater.
         vm.prank(owner);

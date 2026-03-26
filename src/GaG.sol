@@ -5,12 +5,12 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 
-import {DotRotStructs} from "./DotRotStructs.sol";
+import {GaGStructs} from "./GaGStructs.sol";
 import {Utils} from "./render/Utils.sol";
 
 /**
- * @title DotRot — Polkadot Asset Hub Edition
- * @author DotRot Team
+ * @title GaG — Polkadot Asset Hub Edition
+ * @author GaG Team
  * @notice A non-transferable, chaotic slot-machine-style ERC-721 gag NFT collection.
  *         Ported from Base to Polkadot Asset Hub, using native PAS tokens for payment
  *         and off-chain SVG rendering with IPFS storage via Bulletin TransactionStorage.
@@ -24,11 +24,11 @@ import {Utils} from "./render/Utils.sol";
  *         uploads it to Bulletin TransactionStorage (IPFS), and writes the CID back to the contract.
  *
  * @dev Inherits ERC721 + ERC721Pausable for token logic with emergency pause, Ownable for admin
- *      controls, and DotRotStructs for the MintIntent struct definition.
+ *      controls, and GaGStructs for the MintIntent struct definition.
  *      Tokens are soulbound: transfers are blocked in `_update`, and `approve`/`setApprovalForAll`
  *      revert unconditionally.
  */
-contract DotRot is ERC721, ERC721Pausable, Ownable, DotRotStructs {
+contract GaG is ERC721, ERC721Pausable, Ownable, GaGStructs {
     /// @notice Maximum basis points constant (100% = 10 000 bps) used for fee-split arithmetic.
     uint256 public constant MAX_BPTS = 10000;
 
@@ -82,7 +82,7 @@ contract DotRot is ERC721, ERC721Pausable, Ownable, DotRotStructs {
     // -------------------------------------------------------------------------
 
     /**
-     * @notice Deploys the DotRot collection, seeds all 15 intent slots, and sets defaults.
+     * @notice Deploys the GaG collection, seeds all 15 intent slots, and sets defaults.
      * @param initialOwner    Address that will own the contract.
      * @param initialMintPrice  Price in native tokens to submit a mint intent.
      * @param initialBurnFee    Fee in native tokens to burn a token.
@@ -95,7 +95,7 @@ contract DotRot is ERC721, ERC721Pausable, Ownable, DotRotStructs {
         uint256 initialBurnFee,
         address[] memory seedRecipients,
         string[] memory seedMessages
-    ) ERC721("DotRot", "DOTROT") Ownable(initialOwner) {
+    ) ERC721("GaG", "GAG") Ownable(initialOwner) {
         if (initialMintPrice == 0) revert InvalidMintingPrice();
         if (initialBurnFee == 0) revert InvalidBurningFee();
 

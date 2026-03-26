@@ -25,7 +25,7 @@ if (isNaN(tokenId) || !message) {
 mkdirSync("output", { recursive: true });
 
 const { svg } = renderSVG(tokenId, message);
-const metadata = buildMetadata("DotRot", tokenId, message);
+const metadata = buildMetadata("GaG", tokenId, message);
 
 writeFileSync(`output/${tokenId}.svg`, svg);
 writeFileSync(`output/${tokenId}.json`, JSON.stringify(metadata, null, 2));

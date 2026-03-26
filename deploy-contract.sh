@@ -20,12 +20,12 @@ if [ -z "${DEPLOYER_PRIVATE_KEY:-}" ]; then
   exit 1
 fi
 
-echo "==> Deploying DotRot to Paseo Asset Hub"
+echo "==> Deploying GaG to Paseo Asset Hub"
 echo "    RPC: $RPC_URL"
 echo ""
 
 DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" \
-forge script script/DeployDotRot.s.sol \
+forge script script/DeployGaG.s.sol \
   --rpc-url "$RPC_URL" \
   --private-key "$DEPLOYER_PRIVATE_KEY" \
   --broadcast \
@@ -40,5 +40,5 @@ echo "  2. Update frontend/config.js with the contract address"
 echo "  3. Set the metadata updater:"
 echo "     cast send <CONTRACT> 'setMetadataUpdater(address)' <UPDATER_ADDRESS> --private-key \$DEPLOYER_PRIVATE_KEY --rpc-url $RPC_URL"
 echo "  4. Build frontend: cd frontend && node build.js"
-echo "  5. Deploy to .dot.li: ./deploy-dotli.sh dotrot"
+echo "  5. Deploy to .dot.li: ./deploy-dotli.sh gag"
 echo "  6. Start the listener: cd listener && node index.js"

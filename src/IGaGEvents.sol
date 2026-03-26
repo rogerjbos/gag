@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {IDotRotErrors} from "./IDotRotErrors.sol";
+import {IGaGErrors} from "./IGaGErrors.sol";
 
 /**
- * @title IDotRotEvents
- * @notice Custom event definitions for the DotRot collection.
- * @dev Inherits `IDotRotErrors` so that importing this contract provides both
+ * @title IGaGEvents
+ * @notice Custom event definitions for the GaG collection.
+ * @dev Inherits `IGaGErrors` so that importing this contract provides both
  *      errors and events in a single inheritance path.
  */
-interface IDotRotEvents is IDotRotErrors {
+interface IGaGEvents is IGaGErrors {
     /**
      * @notice Emitted when the burn-fee origin share is updated by the owner.
      * @param previousBurnFeeOriginShare The old share value in basis points.

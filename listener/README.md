@@ -1,6 +1,6 @@
-# DotRot Metadata Listener
+# GaG Metadata Listener
 
-Off-chain service that watches for mint events on the DotRot contract, generates SVG artwork + ERC-721 metadata, uploads to Bulletin TransactionStorage (IPFS), and writes the CID back to the contract.
+Off-chain service that watches for mint events on the GaG contract, generates SVG artwork + ERC-721 metadata, uploads to Bulletin TransactionStorage (IPFS), and writes the CID back to the contract.
 
 ## Architecture
 

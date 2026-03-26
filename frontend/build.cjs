@@ -25,8 +25,8 @@ const OUT_DIR = process.argv.includes("--out")
   ? path.resolve(process.argv[process.argv.indexOf("--out") + 1])
   : DEFAULT_OUT;
 
-const SITE_URL = "https://gag.dot.li";
-const DOMAIN_NAME = "gag.dot.li";
+const SITE_URL = "https://gagged.dot.li";
+const DOMAIN_NAME = "gagged.dot.li";
 
 // Assets to copy verbatim
 const COPY_FILES = ["app.js", "config.js", "abi.js", "style.css", "favicon.svg"];

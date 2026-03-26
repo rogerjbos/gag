@@ -3,7 +3,7 @@
 # deploy-dotli.sh — Deploy the DotRot frontend to Polkadot Bulletin via DotNS
 #
 # Usage:
-#   ./deploy-dotli.sh              # deploys dist/ → dotrot.dot
+#   ./deploy-dotli.sh              # deploys dist/ → gag.dot
 #   ./deploy-dotli.sh myname       # deploys dist/ → myname.dot
 #
 # Prerequisites:
@@ -15,7 +15,7 @@
 #
 set -euo pipefail
 
-NAME="${1:-dotrot}"
+NAME="${1:-gagged}"
 BUILD_DIR="./dist"
 BULLETIN_RPC="wss://paseo-bulletin-rpc.polkadot.io"
 DOTNS_RPC="wss://asset-hub-paseo-rpc.n.dwellir.com"

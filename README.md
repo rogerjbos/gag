@@ -1,13 +1,13 @@
 <div align="center">
 
-# DotRot
+# GaG
 
 **Non-transferable prank NFTs on Polkadot Asset Hub.**
 **15-slot chaos buffer · off-chain SVG via Bulletin IPFS · PAS token powered.**
 
 1 PAS to curse. 2 PAS to escape.
 
-[![Website](https://img.shields.io/badge/Website-dotrot.dot.li-E6007A?style=for-the-badge)](https://dotrot.dot.li)
+[![Website](https://img.shields.io/badge/Website-gagged.dot.li-E6007A?style=for-the-badge)](https://gagged.dot.li)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.27-363636?style=flat-square&logo=solidity&logoColor=white)](https://soliditylang.org/)
@@ -17,7 +17,7 @@
 
 ---
 
-> **Fork notice:** DotRot is a port of [Giggles & Gags](https://github.com/GigglesAndGags/gag) (originally on Base) to the Polkadot ecosystem. The core slot-buffer game mechanic is preserved, with key changes: native PAS token payments instead of stablecoins, off-chain SVG rendering stored on Bulletin TransactionStorage (IPFS) instead of on-chain rendering, and .dot.li hosting instead of ENS.
+> **Fork notice:** GaG is a port of [Giggles & Gags](https://github.com/GigglesAndGags/gag) (originally on Base) to the Polkadot ecosystem. The core slot-buffer game mechanic is preserved, with key changes: native PAS token payments instead of stablecoins, off-chain SVG rendering stored on Bulletin TransactionStorage (IPFS) instead of on-chain rendering, and .dot.li hosting instead of ENS.
 
 ---
 
@@ -49,15 +49,15 @@ listener/          Off-chain metadata service
 
 ## Changes from the Original
 
-| Aspect | Giggles & Gags (Base) | DotRot (Asset Hub) |
+| Aspect | Giggles & Gags (Base) | GaG (Asset Hub) |
 |--------|----------------------|-------------------|
 | Chain | Base (8453) | Paseo Asset Hub (420420417) |
 | Payment | ERC-20 stablecoins | Native PAS tokens |
 | SVG rendering | On-chain (Solidity) | Off-chain (JS) + IPFS via Bulletin |
 | Metadata storage | On-chain base64 | IPFS CID reference |
-| Domain | gigglesandgags.eth.limo | dotrot.dot.li |
+| Domain | gigglesandgags.eth.limo | gagged.dot.li |
 | Name resolution | ENS / Basenames / UD | Direct address only |
-| Token symbol | GaG | DOTROT |
+| Token symbol | GaG | GAG |
 
 ## Build
 
@@ -91,7 +91,7 @@ cast send <CONTRACT> 'setMetadataUpdater(address)' <UPDATER_ADDRESS> \
 
 ```bash
 cd frontend && node build.js
-DOTNS_MNEMONIC="..." ./deploy-dotli.sh dotrot
+DOTNS_MNEMONIC="..." ./deploy-dotli.sh gag
 ```
 
 ### 4. Listener

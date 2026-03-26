@@ -314,7 +314,7 @@ export async function connectWallet() {
 
   _enableFactory = await createNonProductExtensionEnableFactory(sandboxTransport);
   if (!_enableFactory) {
-    throw new Error("Not running inside the Host — open this page at gag.dot.li");
+    throw new Error("Not running inside the Host — open this page at gagged.dot.li");
   }
 
   _accountsProvider = createAccountsProvider(sandboxTransport);

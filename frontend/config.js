@@ -17,7 +17,7 @@ const GAG_CONFIG = {
   },
 
   // ---- Site ----
-  siteUrl: "https://gag.dot.li",
+  siteUrl: "https://gagged.dot.li",
 
   // ---- IPFS gateway for fetching metadata ----
   ipfsGateway: "https://paseo-ipfs.polkadot.io/ipfs/",

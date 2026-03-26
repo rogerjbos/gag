@@ -2,21 +2,21 @@
 pragma solidity ^0.8.27;
 
 import {BaseTest} from "./BaseTest.sol";
-import {DotRot} from "../src/DotRot.sol";
-import {IDotRotErrors} from "../src/IDotRotErrors.sol";
-import {IDotRotEvents} from "../src/IDotRotEvents.sol";
+import {GaG} from "../src/GaG.sol";
+import {IGaGErrors} from "../src/IGaGErrors.sol";
+import {IGaGEvents} from "../src/IGaGEvents.sol";
 import {Utils} from "../src/render/Utils.sol";
 
-/// @title DotRotTest
-/// @notice Comprehensive unit tests for the DotRot contract (Polkadot Asset Hub edition).
-contract DotRotTest is BaseTest {
+/// @title GaGTest
+/// @notice Comprehensive unit tests for the GaG contract (Polkadot Asset Hub edition).
+contract GaGTest is BaseTest {
     // =========================================================================
     //  Constructor / Deployment
     // =========================================================================
 
     function test_constructor_setsNameAndSymbol() public view {
-        assertEq(gag.name(), "DotRot");
-        assertEq(gag.symbol(), "DOTROT");
+        assertEq(gag.name(), "GaG");
+        assertEq(gag.symbol(), "GAG");
     }
 
     function test_constructor_setsOwner() public view {
@@ -59,8 +59,8 @@ contract DotRotTest is BaseTest {
         }
 
         vm.expectEmit(false, false, false, true);
-        emit IDotRotEvents.BurnFeeOriginShareUpdated(0, 7500);
-        new DotRot(owner, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
+        emit IGaGEvents.BurnFeeOriginShareUpdated(0, 7500);
+        new GaG(owner, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
     }
 
     function test_constructor_revertsOnMismatchedSeedArrays() public {
@@ -73,16 +73,16 @@ contract DotRotTest is BaseTest {
             badRecipients[i] = address(uint160(3000 + i));
         }
 
-        vm.expectRevert(IDotRotErrors.IncorrectSeedSize.selector);
-        new DotRot(owner, MINT_PRICE, BURN_FEE, badRecipients, seedMsgs);
+        vm.expectRevert(IGaGErrors.IncorrectSeedSize.selector);
+        new GaG(owner, MINT_PRICE, BURN_FEE, badRecipients, seedMsgs);
     }
 
     function test_constructor_revertsOnEmptySeedArrays() public {
         address[] memory empty = new address[](0);
         string[] memory emptyMsgs = new string[](0);
 
-        vm.expectRevert(IDotRotErrors.IncorrectSeedSize.selector);
-        new DotRot(owner, MINT_PRICE, BURN_FEE, empty, emptyMsgs);
+        vm.expectRevert(IGaGErrors.IncorrectSeedSize.selector);
+        new GaG(owner, MINT_PRICE, BURN_FEE, empty, emptyMsgs);
     }
 
     function test_constructor_revertsOnZeroMintPrice() public {
@@ -93,8 +93,8 @@ contract DotRotTest is BaseTest {
             seedMsgs[i] = seedMessages[i];
         }
 
-        vm.expectRevert(IDotRotErrors.InvalidMintingPrice.selector);
-        new DotRot(owner, 0, BURN_FEE, seedRecipients, seedMsgs);
+        vm.expectRevert(IGaGErrors.InvalidMintingPrice.selector);
+        new GaG(owner, 0, BURN_FEE, seedRecipients, seedMsgs);
     }
 
     function test_constructor_revertsOnZeroBurnFee() public {
@@ -105,8 +105,8 @@ contract DotRotTest is BaseTest {
             seedMsgs[i] = seedMessages[i];
         }
 
-        vm.expectRevert(IDotRotErrors.InvalidBurningFee.selector);
-        new DotRot(owner, MINT_PRICE, 0, seedRecipients, seedMsgs);
+        vm.expectRevert(IGaGErrors.InvalidBurningFee.selector);
+        new GaG(owner, MINT_PRICE, 0, seedRecipients, seedMsgs);
     }
 
     function test_constructor_noTokensMintedInitially() public view {
@@ -170,13 +170,13 @@ contract DotRotTest is BaseTest {
 
     function test_submitMintIntent_revertsOnInsufficientPayment() public {
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.InsufficientPayment.selector);
+        vm.expectRevert(IGaGErrors.InsufficientPayment.selector);
         gag.submitMintIntent{value: MINT_PRICE - 1}(false, bob, "hello");
     }
 
     function test_submitMintIntent_revertsOnZeroRecipient() public {
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.InvalidRecipient.selector);
+        vm.expectRevert(IGaGErrors.InvalidRecipient.selector);
         gag.submitMintIntent{value: MINT_PRICE}(false, address(0), "hello");
     }
 
@@ -238,19 +238,19 @@ contract DotRotTest is BaseTest {
         address tokenOwner = gag.ownerOf(tokenId);
 
         vm.prank(tokenOwner);
-        vm.expectRevert(IDotRotErrors.NonTransferable.selector);
+        vm.expectRevert(IGaGErrors.NonTransferable.selector);
         gag.transferFrom(tokenOwner, alice, tokenId);
     }
 
     function test_approve_reverts() public {
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.NonTransferable.selector);
+        vm.expectRevert(IGaGErrors.NonTransferable.selector);
         gag.approve(bob, 0);
     }
 
     function test_setApprovalForAll_reverts() public {
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.NonTransferable.selector);
+        vm.expectRevert(IGaGErrors.NonTransferable.selector);
         gag.setApprovalForAll(bob, true);
     }
 
@@ -317,7 +317,7 @@ contract DotRotTest is BaseTest {
         uint256 tokenId = 0;
 
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.NotTokenOwner.selector);
+        vm.expectRevert(IGaGErrors.NotTokenOwner.selector);
         gag.burnToken{value: BURN_FEE}(tokenId);
     }
 
@@ -328,7 +328,7 @@ contract DotRotTest is BaseTest {
 
         vm.deal(tokenOwner, 10 ether);
         vm.prank(tokenOwner);
-        vm.expectRevert(IDotRotErrors.InsufficientPayment.selector);
+        vm.expectRevert(IGaGErrors.InsufficientPayment.selector);
         gag.burnToken{value: BURN_FEE - 1}(tokenId);
     }
 
@@ -338,7 +338,7 @@ contract DotRotTest is BaseTest {
 
     function test_claimFees_revertsWhenNoFees() public {
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.NoFees.selector);
+        vm.expectRevert(IGaGErrors.NoFees.selector);
         gag.claimFees();
     }
 
@@ -373,7 +373,7 @@ contract DotRotTest is BaseTest {
 
         vm.prank(updater);
         vm.expectEmit(true, false, false, true);
-        emit IDotRotEvents.TokenCIDSet(0, "bafytest");
+        emit IGaGEvents.TokenCIDSet(0, "bafytest");
         gag.setTokenCID(0, "bafytest");
     }
 
@@ -381,7 +381,7 @@ contract DotRotTest is BaseTest {
         _submitIntent(alice, bob, "auth test");
 
         vm.prank(alice);
-        vm.expectRevert(IDotRotErrors.NotMetadataUpdater.selector);
+        vm.expectRevert(IGaGErrors.NotMetadataUpdater.selector);
         gag.setTokenCID(0, "bafytest");
     }
 
@@ -413,7 +413,7 @@ contract DotRotTest is BaseTest {
         address newUpdater = makeAddr("newUpdater");
         vm.prank(owner);
         vm.expectEmit(true, false, false, false);
-        emit IDotRotEvents.MetadataUpdaterSet(newUpdater);
+        emit IGaGEvents.MetadataUpdaterSet(newUpdater);
         gag.setMetadataUpdater(newUpdater);
     }
 
@@ -437,19 +437,19 @@ contract DotRotTest is BaseTest {
     function test_updatePrices_emitsEvent() public {
         vm.prank(owner);
         vm.expectEmit(false, false, false, true);
-        emit IDotRotEvents.PricesUpdated(0.5 ether, 1 ether);
+        emit IGaGEvents.PricesUpdated(0.5 ether, 1 ether);
         gag.updatePrices(0.5 ether, 1 ether);
     }
 
     function test_updatePrices_revertsOnZeroMintPrice() public {
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.InvalidMintingPrice.selector);
+        vm.expectRevert(IGaGErrors.InvalidMintingPrice.selector);
         gag.updatePrices(0, 1 ether);
     }
 
     function test_updatePrices_revertsOnZeroBurnFee() public {
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.InvalidBurningFee.selector);
+        vm.expectRevert(IGaGErrors.InvalidBurningFee.selector);
         gag.updatePrices(1 ether, 0);
     }
 
@@ -484,13 +484,13 @@ contract DotRotTest is BaseTest {
     function test_updateBurnFeeOriginShare_emitsEvent() public {
         vm.prank(owner);
         vm.expectEmit(false, false, false, true);
-        emit IDotRotEvents.BurnFeeOriginShareUpdated(7500, 5000);
+        emit IGaGEvents.BurnFeeOriginShareUpdated(7500, 5000);
         gag.updateBurnFeeOriginShare(5000);
     }
 
     function test_updateBurnFeeOriginShare_revertsOverMax() public {
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.IncorrectShare.selector);
+        vm.expectRevert(IGaGErrors.IncorrectShare.selector);
         gag.updateBurnFeeOriginShare(10001);
     }
 
@@ -531,7 +531,7 @@ contract DotRotTest is BaseTest {
 
     function test_withdrawFees_revertsOnZeroRecipient() public {
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.InvalidRecipient.selector);
+        vm.expectRevert(IGaGErrors.InvalidRecipient.selector);
         gag.withdrawFees(address(0), 0);
     }
 
@@ -539,13 +539,13 @@ contract DotRotTest is BaseTest {
         _submitIntent(alice, bob, "excess test");
 
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.InsufficientFees.selector);
+        vm.expectRevert(IGaGErrors.InsufficientFees.selector);
         gag.withdrawFees(treasury, 999 ether);
     }
 
     function test_withdrawFees_revertsWhenNoFees() public {
         vm.prank(owner);
-        vm.expectRevert(IDotRotErrors.NoFees.selector);
+        vm.expectRevert(IGaGErrors.NoFees.selector);
         gag.withdrawFees(treasury, 0);
     }
 

@@ -2,11 +2,11 @@
 pragma solidity ^0.8.27;
 
 /**
- * @title IDotRotErrors
- * @notice Custom error definitions shared across the DotRot contracts.
+ * @title IGaGErrors
+ * @notice Custom error definitions shared across the GaG contracts.
  * @dev Using custom errors instead of `require` strings saves deployment and runtime gas.
  */
-interface IDotRotErrors {
+interface IGaGErrors {
     /// @notice Thrown when a proposed burn-fee origin share exceeds `MAX_BPTS` (10 000).
     error IncorrectShare();
 

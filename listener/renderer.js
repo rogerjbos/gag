@@ -1,5 +1,5 @@
 /**
- * @title DotRot SVG Renderer (JavaScript port)
+ * @title GaG SVG Renderer (JavaScript port)
  * @notice Faithful port of the Solidity Renderer.sol + Templates.sol + Utils.sol + Metadata.sol
  *         Produces identical SVG output given the same message and tokenId.
  *
@@ -263,7 +263,7 @@ export function deriveRenderData(text) {
 // =========================================================================
 
 function svgHeader() {
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="DotRot">';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="GaG">';
 }
 
 function svgFooter() {
@@ -386,7 +386,7 @@ function frameTemplate(variant, rareMode) {
 function logoTemplate(rareMode) {
   const accent = rareMode ? "#F2B632" : "#FFC94A";
   const fill = rareMode ? "#F7F1E3" : "#F4F1EA";
-  return `<g transform="translate(108 108)"><circle cx="0" cy="0" r="18" fill="none" stroke="${accent}" stroke-width="4"/><circle cx="42" cy="0" r="18" fill="none" stroke="${accent}" stroke-width="4"/><text x="84" y="8" fill="${fill}" font-family="monospace" font-size="30" font-weight="900">DotRot</text></g>`;
+  return `<g transform="translate(108 108)"><circle cx="0" cy="0" r="18" fill="none" stroke="${accent}" stroke-width="4"/><circle cx="42" cy="0" r="18" fill="none" stroke="${accent}" stroke-width="4"/><text x="84" y="8" fill="${fill}" font-family="monospace" font-size="30" font-weight="900">GaG</text></g>`;
 }
 
 function badgeTemplate(label, rareMode) {
@@ -395,7 +395,7 @@ function badgeTemplate(label, rareMode) {
 }
 
 function topEnsDomain() {
-  return '<text x="500" y="34" text-anchor="middle" class="footer-text">dotrot.dot.li</text>';
+  return '<text x="500" y="34" text-anchor="middle" class="footer-text">gagged.dot.li</text>';
 }
 
 function buildSingleLineTextNode(escapedText, fontSize, variant) {
@@ -412,7 +412,7 @@ function captionLine(caption) {
 }
 
 function footerLabel() {
-  return '<text x="500" y="982" text-anchor="middle" class="footer-text">DOTROT</text>';
+  return '<text x="500" y="982" text-anchor="middle" class="footer-text">GAG</text>';
 }
 
 function tokenIdLabel(tokenId) {
@@ -489,7 +489,7 @@ export function buildMetadata(collectionName, tokenId, text) {
 
   return {
     name: `${collectionName} #${tokenId}`,
-    description: "DotRot is a queue-minted on-chain gag collectible. The message and image are rendered fully on-chain.",
+    description: "GaG is a queue-minted on-chain gag collectible. The message and image are rendered fully on-chain.",
     attributes: attributesJSON(data),
     image,
   };

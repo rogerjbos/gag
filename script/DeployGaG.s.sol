@@ -2,15 +2,15 @@
 pragma solidity ^0.8.27;
 
 import {Script, console} from "forge-std/Script.sol";
-import {DotRot} from "../src/DotRot.sol";
+import {GaG} from "../src/GaG.sol";
 
 /**
- * @title DeployDotRot
- * @notice Foundry deploy script for the DotRot collection on Polkadot Asset Hub.
+ * @title DeployGaG
+ * @notice Foundry deploy script for the GaG collection on Polkadot Asset Hub.
  *
  * @dev Paseo Asset Hub Testnet:
  *          DEPLOYER_PRIVATE_KEY=0x<key> \
- *          forge script script/DeployDotRot.s.sol \
+ *          forge script script/DeployGaG.s.sol \
  *              --rpc-url https://eth-rpc-testnet.polkadot.io/ \
  *              --broadcast --via-ir
  *
@@ -18,11 +18,11 @@ import {DotRot} from "../src/DotRot.sol";
  *      1. Start a local node:
  *             anvil
  *      2. Deploy:
- *             forge script script/DeployDotRot.s.sol \
+ *             forge script script/DeployGaG.s.sol \
  *                 --rpc-url http://127.0.0.1:8545 \
  *                 --broadcast --via-ir
  */
-contract DeployDotRot is Script {
+contract DeployGaG is Script {
     /// @dev Default Anvil account #0 private key — only used in local development.
     uint256 constant ANVIL_KEY_0 = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
 
@@ -89,7 +89,7 @@ contract DeployDotRot is Script {
         if (_usePrivateKey) vm.startBroadcast(_deployerKey);
         else vm.startBroadcast();
 
-        DotRot gag = new DotRot(deployer, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
+        GaG gag = new GaG(deployer, MINT_PRICE, BURN_FEE, seedRecipients, seedMsgs);
 
         vm.stopBroadcast();
 
@@ -98,7 +98,7 @@ contract DeployDotRot is Script {
         // -----------------------------------------------------------------
         console.log("");
         console.log("=== Deployment Complete ===");
-        console.log("DotRot:", address(gag));
+        console.log("GaG:", address(gag));
         console.log("Owner:         ", gag.owner());
         console.log("Queue size:    ", gag.queueSize());
         console.log("Mint price:    ", gag.mintPrice(), "(wei)");

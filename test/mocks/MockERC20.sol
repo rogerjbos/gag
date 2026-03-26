@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /// @title MockERC20
-/// @notice Minimal ERC-20 mock with public mint for testing DotRot payment flows.
+/// @notice Minimal ERC-20 mock with public mint for testing GaG payment flows.
 contract MockERC20 is ERC20 {
     uint8 private _decimals;
 

@@ -52,7 +52,7 @@ jobs:
           timeout_minutes: 15
           max_attempts: 3
           retry_wait_seconds: 30
-          command: bulletin-deploy './dist' 'dotrot.dot'
+          command: bulletin-deploy './dist' 'gagged.dot'
         env:
           MNEMONIC: ${{ secrets.DOTNS_MNEMONIC }}
           NODE_OPTIONS: '--max-old-space-size=8192'
